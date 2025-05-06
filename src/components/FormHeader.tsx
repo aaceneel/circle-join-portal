@@ -11,7 +11,11 @@ const FormHeader: React.FC<FormHeaderProps> = ({ className }) => {
     <div className={cn('text-center space-y-3', className)}>
       <div className="inline-block">
         <div className="relative">
-          <h1 className="text-4xl md:text-5xl font-bold font-sora text-gradient">Trading Circle HQ</h1>
+          <img 
+            src="/lovable-uploads/6dc9bcba-75a8-424b-b9f6-7a1da86cf1e1.png" 
+            alt="RAX Logo" 
+            className="h-20 w-auto mx-auto" 
+          />
           <div className="absolute -inset-1 blur-xl opacity-30 bg-glow-gradient rounded-full -z-10"></div>
         </div>
       </div>
