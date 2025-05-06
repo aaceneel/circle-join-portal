@@ -113,6 +113,10 @@ export default {
 				'stardust': {
 					'0%': { transform: 'translateY(0)' },
 					'100%': { transform: 'translateY(-1000px)' },
+				},
+				'marquee': {
+					'0%': { transform: 'translateX(0)' },
+					'100%': { transform: 'translateX(-50%)' },
 				}
 			},
 			animation: {
@@ -124,6 +128,7 @@ export default {
 				'float': 'float 3s ease-in-out infinite',
 				'shimmer': 'shimmer 2s linear infinite',
 				'stardust': 'stardust 50s linear infinite',
+				'marquee': 'marquee 20s linear infinite',
 			},
 			backgroundImage: {
 				'glow-gradient': 'linear-gradient(90deg, #00f0ff, #9b87f5, #f18dff)',
