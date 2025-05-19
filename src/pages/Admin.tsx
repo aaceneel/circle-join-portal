@@ -73,6 +73,7 @@ const Admin = () => {
         throw error;
       }
 
+      console.log("Fetched applications:", data);
       setApplicants(data || []);
     } catch (error: any) {
       console.error('Error fetching applicants:', error);
