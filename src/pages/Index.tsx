@@ -1,5 +1,7 @@
 
 import React, { useState } from 'react';
+import { toast } from 'sonner';
+import { supabase } from '@/integrations/supabase/client';
 import Background from '@/components/Background';
 import FormHeader from '@/components/FormHeader';
 import FormInput from '@/components/FormInput';
@@ -11,7 +13,6 @@ import ProgressBar from '@/components/ProgressBar';
 import SubmitButton from '@/components/SubmitButton';
 import RecentApplicants from '@/components/RecentApplicants';
 import SuccessPage from '@/components/SuccessPage';
-import { toast } from '@/components/ui/sonner';
 
 // Form data interface
 interface FormData {
@@ -88,6 +89,7 @@ const Index = () => {
   const [currentStep, setCurrentStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [formErrors, setFormErrors] = useState<Partial<Record<keyof FormData, string>>>({});
   
   const totalSteps = 4;
   
@@ -95,6 +97,15 @@ const Index = () => {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+    
+    // Clear error when field is filled
+    if (value && formErrors[name as keyof FormData]) {
+      setFormErrors((prev) => {
+        const newErrors = { ...prev };
+        delete newErrors[name as keyof FormData];
+        return newErrors;
+      });
+    }
   };
   
   // Handle toggle changes
@@ -102,12 +113,40 @@ const Index = () => {
     setFormData((prev) => ({ ...prev, openToCall: checked }));
   };
   
+  // Validate current step
+  const validateCurrentStep = () => {
+    const errors: Partial<Record<keyof FormData, string>> = {};
+    
+    if (currentStep === 1) {
+      if (!formData.fullName) errors.fullName = 'Full name is required';
+      if (!formData.age) errors.age = 'Age is required';
+      if (!formData.location) errors.location = 'Location is required';
+      if (!formData.whatsapp) errors.whatsapp = 'WhatsApp number is required';
+    } else if (currentStep === 2) {
+      if (!formData.occupation) errors.occupation = 'Occupation is required';
+      if (!formData.description) errors.description = 'Description is required';
+      if (!formData.income) errors.income = 'Income is required';
+    } else if (currentStep === 3) {
+      if (!formData.goal) errors.goal = 'Goal is required';
+      if (!formData.expectedEarnings) errors.expectedEarnings = 'Expected earnings is required';
+    } else if (currentStep === 4) {
+      if (!formData.mainChallenge) errors.mainChallenge = 'Main challenge is required';
+    }
+    
+    setFormErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+  
   // Handle next step
   const goToNextStep = () => {
-    if (currentStep < totalSteps) {
-      setCurrentStep((prev) => prev + 1);
+    if (validateCurrentStep()) {
+      if (currentStep < totalSteps) {
+        setCurrentStep((prev) => prev + 1);
+      } else {
+        handleSubmit();
+      }
     } else {
-      handleSubmit();
+      toast.error("Please fill in all required fields");
     }
   };
   
@@ -120,18 +159,37 @@ const Index = () => {
   
   // Handle form submission
   const handleSubmit = async () => {
-    setIsSubmitting(true);
-    
     try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+      setIsSubmitting(true);
+      
+      // Insert data into Supabase
+      const { error } = await supabase
+        .from('applications')
+        .insert({
+          full_name: formData.fullName,
+          age: formData.age,
+          location: formData.location,
+          whatsapp: formData.whatsapp,
+          occupation: formData.occupation,
+          description: formData.description,
+          income: formData.income,
+          goal: formData.goal,
+          expected_earnings: formData.expectedEarnings,
+          main_challenge: formData.mainChallenge,
+          open_to_call: formData.openToCall
+        });
+        
+      if (error) {
+        throw error;
+      }
       
       // Show success
       setIsSubmitted(true);
       toast.success("Application submitted successfully!");
       
-    } catch (error) {
-      toast.error("An error occurred. Please try again.");
+    } catch (error: any) {
+      console.error('Error submitting form:', error);
+      toast.error(error.message || "An error occurred. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
@@ -168,6 +226,7 @@ const Index = () => {
                   onChange={handleChange}
                   placeholder="Your full name"
                   required
+                  error={formErrors.fullName}
                 />
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -178,6 +237,7 @@ const Index = () => {
                     onChange={handleChange}
                     options={ageOptions}
                     required
+                    error={formErrors.age}
                   />
                   
                   <FormInput
@@ -188,6 +248,7 @@ const Index = () => {
                     onChange={handleChange}
                     placeholder="City, Country"
                     required
+                    error={formErrors.location}
                   />
                 </div>
                 
@@ -199,6 +260,7 @@ const Index = () => {
                   onChange={handleChange}
                   placeholder="Include country code (e.g., +1234567890)"
                   required
+                  error={formErrors.whatsapp}
                 />
               </FormStep>
               
@@ -216,6 +278,7 @@ const Index = () => {
                   onChange={handleChange}
                   options={occupationOptions}
                   required
+                  error={formErrors.occupation}
                 />
                 
                 <FormTextArea
@@ -225,6 +288,7 @@ const Index = () => {
                   onChange={handleChange}
                   placeholder="Describe your current role and responsibilities (100-200 words)"
                   required
+                  error={formErrors.description}
                 />
                 
                 <FormSelect
@@ -234,6 +298,7 @@ const Index = () => {
                   onChange={handleChange}
                   options={incomeOptions}
                   required
+                  error={formErrors.income}
                 />
               </FormStep>
               
@@ -251,6 +316,7 @@ const Index = () => {
                   onChange={handleChange}
                   placeholder="Share your short and long-term trading objectives"
                   required
+                  error={formErrors.goal}
                 />
                 
                 <FormSelect
@@ -260,6 +326,7 @@ const Index = () => {
                   onChange={handleChange}
                   options={earningsOptions}
                   required
+                  error={formErrors.expectedEarnings}
                 />
               </FormStep>
               
@@ -277,6 +344,7 @@ const Index = () => {
                   onChange={handleChange}
                   options={challengeOptions}
                   required
+                  error={formErrors.mainChallenge}
                 />
                 
                 <FormToggle

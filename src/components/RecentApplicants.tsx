@@ -1,36 +1,53 @@
 
 import React from 'react';
 import { cn } from '@/lib/utils';
-
-// Fake data for recent applicants
-const recentApplicants = [
-  { id: 1, name: 'Alex S.', location: 'New York', time: '2 mins ago' },
-  { id: 2, name: 'Maria L.', location: 'London', time: '5 mins ago' },
-  { id: 3, name: 'John D.', location: 'Toronto', time: '8 mins ago' },
-  { id: 4, name: 'Sara K.', location: 'Berlin', time: '12 mins ago' },
-  { id: 5, name: 'Thomas R.', location: 'Sydney', time: '15 mins ago' },
-];
-
-// Double the applicants array to create a seamless loop
-const doubledApplicants = [...recentApplicants, ...recentApplicants];
+import useRecentApplicants from '@/hooks/useRecentApplicants';
 
 interface RecentApplicantsProps {
   className?: string;
 }
 
 const RecentApplicants: React.FC<RecentApplicantsProps> = ({ className }) => {
+  const { applicants, loading } = useRecentApplicants();
+  
+  // Default data to show while loading or if there's no data yet
+  const defaultApplicants = [
+    { full_name: 'Sarah J.', location: 'New York, USA', created_at: new Date().toISOString() },
+    { full_name: 'Michael T.', location: 'London, UK', created_at: new Date().toISOString() },
+    { full_name: 'David K.', location: 'Toronto, Canada', created_at: new Date().toISOString() },
+    { full_name: 'Anna P.', location: 'Sydney, Australia', created_at: new Date().toISOString() },
+    { full_name: 'Thomas R.', location: 'Berlin, Germany', created_at: new Date().toISOString() },
+  ];
+
+  const displayApplicants = loading || applicants.length === 0 ? defaultApplicants : applicants;
+  
   return (
-    <div className={cn('overflow-hidden glass-card px-4 py-3', className)}>
-      <h3 className="text-sm text-white/50 mb-2">Recent Applicants:</h3>
-      <div className="relative w-full overflow-hidden">
-        <div className="animate-marquee flex whitespace-nowrap">
-          {doubledApplicants.map((applicant, index) => (
-            <div key={`${applicant.id}-${index}`} className="flex-shrink-0 px-3 py-2 inline-block">
-              <div className="font-medium text-white/90">{applicant.name}</div>
-              <div className="text-xs text-white/50">{applicant.location} • {applicant.time}</div>
-            </div>
-          ))}
-        </div>
+    <div className={cn('w-full overflow-hidden', className)}>
+      <div className="animate-marquee whitespace-nowrap flex space-x-6">
+        {displayApplicants.map((applicant, index) => (
+          <div 
+            key={index}
+            className="inline-flex items-center bg-dark-lighter px-3 py-1.5 rounded-full"
+          >
+            <div className="h-2.5 w-2.5 bg-glow-green rounded-full mr-2 animate-pulse"></div>
+            <span className="text-white/70 text-sm">
+              {applicant.full_name}, {applicant.location}
+            </span>
+          </div>
+        ))}
+        
+        {/* Duplicate items to ensure continuous scroll */}
+        {displayApplicants.map((applicant, index) => (
+          <div 
+            key={`dup-${index}`}
+            className="inline-flex items-center bg-dark-lighter px-3 py-1.5 rounded-full"
+          >
+            <div className="h-2.5 w-2.5 bg-glow-green rounded-full mr-2 animate-pulse"></div>
+            <span className="text-white/70 text-sm">
+              {applicant.full_name}, {applicant.location}
+            </span>
+          </div>
+        ))}
       </div>
     </div>
   );
