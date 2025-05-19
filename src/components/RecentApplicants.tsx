@@ -10,16 +10,24 @@ interface RecentApplicantsProps {
 const RecentApplicants: React.FC<RecentApplicantsProps> = ({ className }) => {
   const { applicants, loading } = useRecentApplicants();
   
-  // Default data to show while loading or if there's no data yet
-  const defaultApplicants = [
+  // Default data to mix with real applicants
+  const fakeApplicants = [
     { full_name: 'Sarah J.', location: 'New York, USA', created_at: new Date().toISOString() },
     { full_name: 'Michael T.', location: 'London, UK', created_at: new Date().toISOString() },
     { full_name: 'David K.', location: 'Toronto, Canada', created_at: new Date().toISOString() },
     { full_name: 'Anna P.', location: 'Sydney, Australia', created_at: new Date().toISOString() },
     { full_name: 'Thomas R.', location: 'Berlin, Germany', created_at: new Date().toISOString() },
+    { full_name: 'Emma L.', location: 'Paris, France', created_at: new Date().toISOString() },
+    { full_name: 'James W.', location: 'Tokyo, Japan', created_at: new Date().toISOString() },
+    { full_name: 'Olivia S.', location: 'Cape Town, South Africa', created_at: new Date().toISOString() },
+    { full_name: 'Noah R.', location: 'Dubai, UAE', created_at: new Date().toISOString() },
+    { full_name: 'Sofia M.', location: 'Mumbai, India', created_at: new Date().toISOString() },
   ];
 
-  const displayApplicants = loading || applicants.length === 0 ? defaultApplicants : applicants;
+  // Combine real and fake applicants
+  const displayApplicants = loading || applicants.length === 0 
+    ? fakeApplicants 
+    : [...applicants, ...fakeApplicants.slice(0, 5)]; // Mix real with 5 fake applicants
   
   return (
     <div className={cn('w-full overflow-hidden', className)}>

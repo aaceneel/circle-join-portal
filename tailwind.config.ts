@@ -52,21 +52,26 @@ const config: Config = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
-        // Add the dark theme colors
+        // Dark theme colors
         dark: {
           DEFAULT: "#121212",
           lighter: "#1E1E1E",
+          medium: "#333333",
         },
-        // Add the glow colors
+        // Glow colors (changed to grayscale)
         "glow-blue": {
-          DEFAULT: "#3B82F6", // A bright blue color
-          "20": "rgba(59, 130, 246, 0.2)", // Same blue with 20% opacity
+          DEFAULT: "#888888", // Changed to gray
+          "20": "rgba(136, 136, 136, 0.2)", // Gray with 20% opacity
         },
         "glow-purple": {
-          DEFAULT: "#8B5CF6", // A purple color
-          "50": "rgba(139, 92, 246, 0.5)", // Purple with 50% opacity
+          DEFAULT: "#F1F1F1", // Changed to light gray
+          "50": "rgba(241, 241, 241, 0.5)", // Light gray with 50% opacity
         },
-        "glow-gradient": "linear-gradient(to right, #3B82F6, #8B5CF6)",
+        // Updated to grayscale gradient
+        "glow-green": {
+          DEFAULT: "#888888", // Gray for the pulse dot in RecentApplicants
+        },
+        "glow-gradient": "linear-gradient(to right, #222222, #888888)",
       },
       borderRadius: {
         lg: "var(--radius)",
@@ -103,7 +108,7 @@ const config: Config = {
         "float": "float 3s ease-in-out infinite"
       },
       backgroundImage: {
-        "glow-gradient": "linear-gradient(to right, #3B82F6, #8B5CF6)",
+        "glow-gradient": "linear-gradient(to right, #222222, #888888)",
       },
     },
   },

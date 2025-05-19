@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 
 const Background = () => {
-  const [stars, setStars] = useState<{ id: number; top: number; left: number; size: number; duration: number }[]>([]);
+  const [stars, setStars] = useState<{ id: number; top: number; left: number; size: number; duration: number; opacity: number }[]>([]);
 
   useEffect(() => {
     const generateStars = () => {
@@ -15,7 +15,8 @@ const Background = () => {
           top: Math.random() * 100,
           left: Math.random() * 100,
           size: 1 + Math.random() * 2,
-          duration: 30 + Math.random() * 60
+          duration: 30 + Math.random() * 60,
+          opacity: 0.05 + Math.random() * 0.1 // Lower opacity for subtler effect
         });
       }
       
@@ -27,7 +28,7 @@ const Background = () => {
   
   return (
     <div className="fixed inset-0 z-[-1] overflow-hidden">
-      <div className="absolute inset-0 bg-dark-gradient"></div>
+      <div className="absolute inset-0 bg-dark"></div>
       {stars.map((star) => (
         <div
           key={star.id}
@@ -37,11 +38,12 @@ const Background = () => {
             left: `${star.left}%`,
             width: `${star.size}px`,
             height: `${star.size}px`,
+            opacity: star.opacity,
             animationDuration: `${star.duration}s`
           }}
         ></div>
       ))}
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(0,240,255,0.1)_0%,transparent_70%)]"></div>
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(241,241,241,0.05)_0%,transparent_70%)]"></div>
     </div>
   );
 };
