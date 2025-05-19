@@ -4,6 +4,8 @@ import { supabase } from '@/integrations/supabase/client';
 import Background from '@/components/Background';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { formatDistanceToNow } from 'date-fns';
 
 interface Applicant {
   id: string;
@@ -28,6 +30,7 @@ const Admin = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [applicants, setApplicants] = useState<Applicant[]>([]);
   const [isLoadingData, setIsLoadingData] = useState(false);
+  const [selectedApplicant, setSelectedApplicant] = useState<Applicant | null>(null);
   const navigate = useNavigate();
 
   const hardcodedCredentials = {
@@ -79,6 +82,14 @@ const Admin = () => {
     }
   };
 
+  const handleViewDetails = (applicant: Applicant) => {
+    setSelectedApplicant(applicant);
+  };
+
+  const handleCloseDetails = () => {
+    setSelectedApplicant(null);
+  };
+
   useEffect(() => {
     const checkAuth = () => {
       const isAuth = localStorage.getItem('admin_authenticated') === 'true';
@@ -90,6 +101,14 @@ const Admin = () => {
 
     checkAuth();
   }, []);
+
+  const formatDate = (dateString: string) => {
+    try {
+      return formatDistanceToNow(new Date(dateString), { addSuffix: true });
+    } catch (e) {
+      return "Unknown date";
+    }
+  };
 
   return (
     <div className="min-h-screen w-full">
@@ -131,7 +150,7 @@ const Admin = () => {
                 type="submit"
                 disabled={isLoading}
                 className={`w-full py-3 rounded-lg text-white font-medium transition-all
-                  ${isLoading ? 'bg-gray-500' : 'bg-glow-gradient hover:opacity-90'}`}
+                  ${isLoading ? 'bg-gray-500' : 'bg-dark-lighter hover:bg-gray-700'}`}
               >
                 {isLoading ? 'Logging in...' : 'Login'}
               </button>
@@ -149,52 +168,111 @@ const Admin = () => {
               </button>
             </div>
             
-            {isLoadingData ? (
+            {selectedApplicant ? (
+              <div className="glass-card p-6 mb-8">
+                <div className="flex justify-between items-center mb-4">
+                  <h3 className="text-xl font-bold text-white/90">{selectedApplicant.full_name}'s Application</h3>
+                  <button
+                    onClick={handleCloseDetails}
+                    className="text-white/70 hover:text-white px-3 py-1 rounded-md bg-dark-medium"
+                  >
+                    Back to List
+                  </button>
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <p className="text-white/60 mb-1">Age</p>
+                    <p className="text-white/90">{selectedApplicant.age}</p>
+                  </div>
+                  <div>
+                    <p className="text-white/60 mb-1">Location</p>
+                    <p className="text-white/90">{selectedApplicant.location}</p>
+                  </div>
+                  <div>
+                    <p className="text-white/60 mb-1">WhatsApp</p>
+                    <p className="text-white/90">{selectedApplicant.whatsapp}</p>
+                  </div>
+                  <div>
+                    <p className="text-white/60 mb-1">Occupation</p>
+                    <p className="text-white/90">{selectedApplicant.occupation}</p>
+                  </div>
+                  <div>
+                    <p className="text-white/60 mb-1">Income</p>
+                    <p className="text-white/90">{selectedApplicant.income}</p>
+                  </div>
+                  <div>
+                    <p className="text-white/60 mb-1">Expected Earnings</p>
+                    <p className="text-white/90">{selectedApplicant.expected_earnings}</p>
+                  </div>
+                  <div>
+                    <p className="text-white/60 mb-1">Goal</p>
+                    <p className="text-white/90">{selectedApplicant.goal}</p>
+                  </div>
+                  <div>
+                    <p className="text-white/60 mb-1">Open to Call</p>
+                    <p className="text-white/90">
+                      {selectedApplicant.open_to_call ? 'Yes' : 'No'}
+                    </p>
+                  </div>
+                  <div className="col-span-1 md:col-span-2">
+                    <p className="text-white/60 mb-1">Description</p>
+                    <p className="text-white/90">{selectedApplicant.description}</p>
+                  </div>
+                  <div className="col-span-1 md:col-span-2">
+                    <p className="text-white/60 mb-1">Main Challenge</p>
+                    <p className="text-white/90">{selectedApplicant.main_challenge}</p>
+                  </div>
+                </div>
+              </div>
+            ) : isLoadingData ? (
               <div className="text-center py-12">
                 <p className="text-white/70">Loading applicants...</p>
               </div>
             ) : (
-              <div className="overflow-x-auto">
-                <table className="w-full border-collapse">
-                  <thead>
-                    <tr className="bg-dark-medium text-white/80">
-                      <th className="p-4 text-left">Name</th>
-                      <th className="p-4 text-left">Location</th>
-                      <th className="p-4 text-left">Age</th>
-                      <th className="p-4 text-left">WhatsApp</th>
-                      <th className="p-4 text-left">Occupation</th>
-                      <th className="p-4 text-left">Open to Call</th>
-                      <th className="p-4 text-left">Date</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {applicants.length === 0 ? (
-                      <tr>
-                        <td colSpan={7} className="p-4 text-center text-white/60">No applicants found</td>
-                      </tr>
-                    ) : (
-                      applicants.map((applicant) => (
-                        <tr key={applicant.id} className="border-b border-dark-medium hover:bg-dark-lighter/30">
-                          <td className="p-4 text-white/90">{applicant.full_name}</td>
-                          <td className="p-4 text-white/70">{applicant.location}</td>
-                          <td className="p-4 text-white/70">{applicant.age}</td>
-                          <td className="p-4 text-white/70">{applicant.whatsapp}</td>
-                          <td className="p-4 text-white/70">{applicant.occupation}</td>
-                          <td className="p-4 text-white/70">
-                            {applicant.open_to_call ? (
-                              <span className="bg-gray-500/20 text-white/80 px-2 py-1 rounded text-xs">Yes</span>
-                            ) : (
-                              <span className="bg-gray-700/20 text-white/60 px-2 py-1 rounded text-xs">No</span>
-                            )}
-                          </td>
-                          <td className="p-4 text-white/70">
-                            {new Date(applicant.created_at).toLocaleDateString()}
-                          </td>
-                        </tr>
-                      ))
-                    )}
-                  </tbody>
-                </table>
+              <div>
+                {applicants.length === 0 ? (
+                  <div className="text-center py-12">
+                    <p className="text-white/60">No applications found</p>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {applicants.map((applicant) => (
+                      <Card key={applicant.id} className="bg-dark-lighter border border-white/10 text-white shadow-lg hover:shadow-xl transition-shadow">
+                        <CardHeader>
+                          <div className="flex justify-between items-start">
+                            <div>
+                              <CardTitle className="text-lg font-medium text-white/90">{applicant.full_name}</CardTitle>
+                              <CardDescription className="text-white/60">
+                                {applicant.location} • {applicant.age}
+                              </CardDescription>
+                            </div>
+                            <span className={`inline-flex h-2.5 w-2.5 rounded-full ${applicant.open_to_call ? 'bg-gray-400' : 'bg-gray-600'}`}></span>
+                          </div>
+                        </CardHeader>
+                        <CardContent>
+                          <div className="space-y-2">
+                            <p className="text-sm text-white/70">
+                              <span className="font-medium">Occupation:</span> {applicant.occupation}
+                            </p>
+                            <p className="text-sm text-white/70 line-clamp-2">
+                              <span className="font-medium">Description:</span> {applicant.description}
+                            </p>
+                          </div>
+                        </CardContent>
+                        <CardFooter className="flex justify-between">
+                          <span className="text-xs text-white/50">{formatDate(applicant.created_at)}</span>
+                          <button 
+                            onClick={() => handleViewDetails(applicant)}
+                            className="text-sm px-3 py-1 rounded bg-dark-medium hover:bg-gray-700 transition-colors"
+                          >
+                            View Details
+                          </button>
+                        </CardFooter>
+                      </Card>
+                    ))}
+                  </div>
+                )}
               </div>
             )}
           </div>
