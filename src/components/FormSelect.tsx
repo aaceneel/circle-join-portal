@@ -7,6 +7,7 @@ interface FormSelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> 
   options: { value: string; label: string }[];
   error?: string;
   wrapperClassName?: string;
+  hint?: string;
 }
 
 const FormSelect: React.FC<FormSelectProps> = ({ 
@@ -15,6 +16,7 @@ const FormSelect: React.FC<FormSelectProps> = ({
   error, 
   className,
   wrapperClassName,
+  hint,
   ...props 
 }) => {
   return (
@@ -35,6 +37,7 @@ const FormSelect: React.FC<FormSelectProps> = ({
           </option>
         ))}
       </select>
+      {hint && <p className="mt-1 text-sm text-white/50 italic">{hint}</p>}
       {error && <p className="mt-1 text-sm text-red-400">{error}</p>}
     </div>
   );

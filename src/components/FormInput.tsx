@@ -6,6 +6,7 @@ interface FormInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label: string;
   error?: string;
   wrapperClassName?: string;
+  hint?: string;
 }
 
 const FormInput: React.FC<FormInputProps> = ({ 
@@ -13,6 +14,7 @@ const FormInput: React.FC<FormInputProps> = ({
   error, 
   className,
   wrapperClassName,
+  hint,
   ...props 
 }) => {
   return (
@@ -26,6 +28,7 @@ const FormInput: React.FC<FormInputProps> = ({
         )}
         {...props}
       />
+      {hint && <p className="mt-1 text-sm text-white/50 italic">{hint}</p>}
       {error && <p className="mt-1 text-sm text-red-400">{error}</p>}
     </div>
   );

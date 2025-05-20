@@ -18,12 +18,13 @@ import SuccessPage from '@/components/SuccessPage';
 interface FormData {
   fullName: string;
   age: string;
-  location: string;
+  country: string;
   whatsapp: string;
+  instagram: string;
   occupation: string;
   description: string;
   income: string;
-  goal: string;
+  tradingExperience: string;
   expectedEarnings: string;
   mainChallenge: string;
   openToCall: boolean;
@@ -33,46 +34,72 @@ interface FormData {
 const initialFormData: FormData = {
   fullName: '',
   age: '',
-  location: '',
+  country: '',
   whatsapp: '',
+  instagram: '',
   occupation: '',
   description: '',
   income: '',
-  goal: '',
+  tradingExperience: '',
   expectedEarnings: '',
   mainChallenge: '',
   openToCall: true,
 };
 
 // Options for select inputs
-const ageOptions = Array.from({ length: 58 }, (_, i) => {
+const ageOptions = Array.from({ length: 68 }, (_, i) => {
   const age = i + 13;
   return { value: age.toString(), label: age.toString() };
-});
+}).concat([{ value: '80+', label: '80+' }]);
+
+const countryOptions = [
+  { value: 'US', label: 'United States' },
+  { value: 'GB', label: 'United Kingdom' },
+  { value: 'CA', label: 'Canada' },
+  { value: 'AU', label: 'Australia' },
+  { value: 'IN', label: 'India' },
+  { value: 'DE', label: 'Germany' },
+  { value: 'FR', label: 'France' },
+  { value: 'IT', label: 'Italy' },
+  { value: 'ES', label: 'Spain' },
+  { value: 'BR', label: 'Brazil' },
+  { value: 'MX', label: 'Mexico' },
+  { value: 'JP', label: 'Japan' },
+  { value: 'CN', label: 'China' },
+  { value: 'RU', label: 'Russia' },
+  { value: 'ZA', label: 'South Africa' },
+  { value: 'NG', label: 'Nigeria' },
+  { value: 'AE', label: 'United Arab Emirates' },
+  { value: 'SA', label: 'Saudi Arabia' },
+  { value: 'SG', label: 'Singapore' },
+  { value: 'MY', label: 'Malaysia' },
+  // Add more countries as needed
+];
 
 const occupationOptions = [
   { value: 'student', label: 'Student' },
-  { value: 'job', label: 'Employed' },
-  { value: 'business', label: 'Business Owner' },
-  { value: 'freelancer', label: 'Freelancer' },
-  { value: 'unemployed', label: 'Unemployed' },
+  { value: 'employee', label: 'Employee' },
+  { value: 'business', label: 'Self-employed / Business Owner' },
+  { value: 'unemployed', label: 'Currently not working' },
   { value: 'other', label: 'Other' },
 ];
 
 const incomeOptions = [
-  { value: 'less-1k', label: 'Less than $1,000' },
-  { value: '1k-3k', label: '$1,000 - $3,000' },
-  { value: '3k-10k', label: '$3,000 - $10,000' },
-  { value: '10k-25k', label: '$10,000 - $25,000' },
-  { value: 'more-25k', label: '$25,000+' },
+  { value: 'less-500', label: 'Less than $500/month USD' },
+  { value: '500-1k', label: '$500 – $1,000/month USD' },
+  { value: '1k-4k', label: '$1,000 – $4,000/month USD' },
+  { value: '4k-7k', label: '$4,000 – $7,000/month USD' },
+  { value: '7k-10k', label: '$7,000 – $10,000/month USD' },
+  { value: '10k+', label: '$10,000+ USD' },
+  { value: 'other', label: 'Other' },
 ];
 
-const challengeOptions = [
-  { value: 'capital', label: 'Lack of capital' },
-  { value: 'skills', label: 'Need to improve skills' },
-  { value: 'strategy', label: 'No clear strategy' },
-  { value: 'time', label: 'Not enough time' },
-  { value: 'mentorship', label: 'Need mentorship' },
+const tradingExperienceOptions = [
+  { value: 'never', label: 'Never tried' },
+  { value: 'beginner', label: 'Beginner' },
+  { value: 'intermediate', label: 'Intermediate' },
+  { value: 'advanced', label: 'Advanced' },
+  { value: 'profitable', label: 'I\'ve made significant profits' },
 ];
 
 const earningsOptions = [
@@ -90,6 +117,7 @@ const Index = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [formErrors, setFormErrors] = useState<Partial<Record<keyof FormData, string>>>({});
+  const [customIncome, setCustomIncome] = useState('');
   
   const totalSteps = 4;
   
@@ -113,24 +141,59 @@ const Index = () => {
     setFormData((prev) => ({ ...prev, openToCall: checked }));
   };
   
+  // Validate name format (only letters and at least 2 chars per name part)
+  const validateName = (name: string): boolean => {
+    const nameParts = name.trim().split(/\s+/);
+    const validFormat = /^[A-Za-z]+$/;
+    
+    if (nameParts.length < 2) return false;
+    
+    return nameParts.every(part => {
+      return validFormat.test(part) && part.length >= 2;
+    });
+  };
+  
+  // Validate phone number format
+  const validatePhone = (phone: string): boolean => {
+    // Check for country code (must start with +)
+    const phoneRegex = /^\+[0-9]{1,4}[0-9\s]{5,14}$/;
+    return phoneRegex.test(phone);
+  };
+  
   // Validate current step
   const validateCurrentStep = () => {
     const errors: Partial<Record<keyof FormData, string>> = {};
     
     if (currentStep === 1) {
-      if (!formData.fullName) errors.fullName = 'Full name is required';
+      if (!formData.fullName) {
+        errors.fullName = 'Full name is required';
+      } else if (!validateName(formData.fullName)) {
+        errors.fullName = 'Name must contain only letters, with at least 2 characters per name part';
+      }
+      
       if (!formData.age) errors.age = 'Age is required';
-      if (!formData.location) errors.location = 'Location is required';
-      if (!formData.whatsapp) errors.whatsapp = 'WhatsApp number is required';
+      if (!formData.country) errors.country = 'Country is required';
+      
+      if (!formData.whatsapp) {
+        errors.whatsapp = 'WhatsApp number is required';
+      } else if (!validatePhone(formData.whatsapp)) {
+        errors.whatsapp = 'Please enter a valid WhatsApp number with country code (e.g., +1 123 456 7890)';
+      }
+      
+      // Instagram is optional, no validation needed
     } else if (currentStep === 2) {
       if (!formData.occupation) errors.occupation = 'Occupation is required';
-      if (!formData.description) errors.description = 'Description is required';
       if (!formData.income) errors.income = 'Income is required';
+      
+      // Description is optional but suggested to have more than 1 word
+      if (formData.description && formData.description.trim().split(/\s+/).length < 2) {
+        errors.description = 'Please provide more details (at least 2 words)';
+      }
     } else if (currentStep === 3) {
-      if (!formData.goal) errors.goal = 'Goal is required';
+      if (!formData.tradingExperience) errors.tradingExperience = 'Trading experience is required';
       if (!formData.expectedEarnings) errors.expectedEarnings = 'Expected earnings is required';
     } else if (currentStep === 4) {
-      if (!formData.mainChallenge) errors.mainChallenge = 'Main challenge is required';
+      if (!formData.mainChallenge) errors.mainChallenge = 'Please share your main challenge';
     }
     
     setFormErrors(errors);
@@ -146,7 +209,7 @@ const Index = () => {
         handleSubmit();
       }
     } else {
-      toast.error("Please fill in all required fields");
+      toast.error("Please fill in all required fields correctly");
     }
   };
   
@@ -162,18 +225,22 @@ const Index = () => {
     try {
       setIsSubmitting(true);
       
+      // Prepare the final income value
+      const finalIncome = formData.income === 'other' ? customIncome : formData.income;
+      
       // Insert data into Supabase
       const { error } = await supabase
         .from('applications')
         .insert({
           full_name: formData.fullName,
           age: formData.age,
-          location: formData.location,
+          location: formData.country,
           whatsapp: formData.whatsapp,
+          instagram: formData.instagram || null,
           occupation: formData.occupation,
-          description: formData.description,
-          income: formData.income,
-          goal: formData.goal,
+          description: formData.description || null,
+          income: finalIncome,
+          trading_experience: formData.tradingExperience,
           expected_earnings: formData.expectedEarnings,
           main_challenge: formData.mainChallenge,
           open_to_call: formData.openToCall
@@ -227,6 +294,7 @@ const Index = () => {
                   placeholder="Your full name"
                   required
                   error={formErrors.fullName}
+                  hint="Example: John Doe (letters only, minimum 2 characters per name part)"
                 />
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -240,27 +308,35 @@ const Index = () => {
                     error={formErrors.age}
                   />
                   
-                  <FormInput
-                    label="Where are you based?"
-                    type="text"
-                    name="location"
-                    value={formData.location}
+                  <FormSelect
+                    label="Where are you from?"
+                    name="country"
+                    value={formData.country}
                     onChange={handleChange}
-                    placeholder="City, Country"
+                    options={countryOptions}
                     required
-                    error={formErrors.location}
+                    error={formErrors.country}
                   />
                 </div>
                 
                 <FormInput
-                  label="WhatsApp Number"
+                  label="WhatsApp Number (for exclusive updates and tips)"
                   type="tel"
                   name="whatsapp"
                   value={formData.whatsapp}
                   onChange={handleChange}
-                  placeholder="Include country code (e.g., +1234567890)"
+                  placeholder="Include country code (e.g., +1 123 456 7890)"
                   required
                   error={formErrors.whatsapp}
+                />
+                
+                <FormInput
+                  label="Instagram ID (optional)"
+                  type="text"
+                  name="instagram"
+                  value={formData.instagram}
+                  onChange={handleChange}
+                  placeholder="Your Instagram username (without @)"
                 />
               </FormStep>
               
@@ -272,7 +348,7 @@ const Index = () => {
                 <h3 className="text-xl font-space font-medium text-white/90 mb-4">Your Occupation</h3>
                 
                 <FormSelect
-                  label="What's your current occupation?"
+                  label="Current Occupation"
                   name="occupation"
                   value={formData.occupation}
                   onChange={handleChange}
@@ -282,17 +358,17 @@ const Index = () => {
                 />
                 
                 <FormTextArea
-                  label="Tell us briefly what you do for a living"
+                  label="What exactly do you do for a living?"
                   name="description"
                   value={formData.description}
                   onChange={handleChange}
-                  placeholder="Describe your current role and responsibilities (100-200 words)"
-                  required
+                  placeholder="Describe your current role and responsibilities"
+                  hint="e.g., 'I run an online dropshipping business' instead of just 'work'"
                   error={formErrors.description}
                 />
                 
                 <FormSelect
-                  label="What is your current monthly income (USD)?"
+                  label="Current Monthly Income"
                   name="income"
                   value={formData.income}
                   onChange={handleChange}
@@ -300,27 +376,38 @@ const Index = () => {
                   required
                   error={formErrors.income}
                 />
+                
+                {formData.income === 'other' && (
+                  <FormInput
+                    label="Please specify your income"
+                    type="text"
+                    value={customIncome}
+                    onChange={(e) => setCustomIncome(e.target.value)}
+                    placeholder="Your custom income amount"
+                    required
+                  />
+                )}
               </FormStep>
               
-              {/* Step 3: Trading Goals */}
+              {/* Step 3: Trading Experience */}
               <FormStep
                 isActive={currentStep === 3}
                 isCompleted={currentStep > 3}
               >
-                <h3 className="text-xl font-space font-medium text-white/90 mb-4">Your Trading Goals</h3>
+                <h3 className="text-xl font-space font-medium text-white/90 mb-4">Your Trading Experience</h3>
                 
-                <FormTextArea
-                  label="What is your goal with your trading journey?"
-                  name="goal"
-                  value={formData.goal}
+                <FormSelect
+                  label="Have you ever tried trading? What's your current level?"
+                  name="tradingExperience"
+                  value={formData.tradingExperience}
                   onChange={handleChange}
-                  placeholder="Share your short and long-term trading objectives"
+                  options={tradingExperienceOptions}
                   required
-                  error={formErrors.goal}
+                  error={formErrors.tradingExperience}
                 />
                 
                 <FormSelect
-                  label="How much would you like to earn per year in the next 12 months?"
+                  label="How much would you like to earn per year within the next 12 months?"
                   name="expectedEarnings"
                   value={formData.expectedEarnings}
                   onChange={handleChange}
@@ -337,12 +424,13 @@ const Index = () => {
               >
                 <h3 className="text-xl font-space font-medium text-white/90 mb-4">One Last Thing</h3>
                 
-                <FormSelect
-                  label="What's the #1 thing holding you back from hitting that goal?"
+                <FormTextArea
+                  label="What are the biggest obstacles that keep you from achieving your goal?"
                   name="mainChallenge"
                   value={formData.mainChallenge}
                   onChange={handleChange}
-                  options={challengeOptions}
+                  placeholder="Share your main challenges"
+                  hint="e.g., Lack of capital, time, knowledge, or strategy"
                   required
                   error={formErrors.mainChallenge}
                 />
