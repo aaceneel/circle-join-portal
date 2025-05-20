@@ -1,4 +1,5 @@
 import { supabase } from '@/integrations/supabase/client';
+import { adminSupabase } from '@/integrations/supabase/adminClient';
 
 /**
  * Test Supabase connection and table access
@@ -7,31 +8,55 @@ export async function testSupabaseConnection() {
   try {
     console.log("Testing Supabase connection...");
     
-    // Test basic connection
+    // Test basic connection with regular client
+    console.log("Testing with regular client:");
     const { data: versionData, error: versionError } = await supabase
       .rpc('version');
       
     if (versionError) {
-      console.error("Error connecting to Supabase:", versionError);
+      console.error("Error connecting to Supabase (regular client):", versionError);
     } else {
-      console.log("Supabase connection successful:", versionData);
+      console.log("Supabase connection successful (regular client):", versionData);
+    }
+
+    // Test with admin client
+    console.log("Testing with admin client:");
+    const { data: adminVersionData, error: adminVersionError } = await adminSupabase
+      .rpc('version');
+      
+    if (adminVersionError) {
+      console.error("Error connecting to Supabase (admin client):", adminVersionError);
+    } else {
+      console.log("Supabase connection successful (admin client):", adminVersionData);
     }
     
-    // Test applications table access
-    console.log("Testing applications table access...");
+    // Test applications table access with regular client
+    console.log("Testing applications table access with regular client:");
     const { data: appCount, error: appError } = await supabase
       .from('applications')
       .select('count()', { count: 'exact' });
       
     if (appError) {
-      console.error("Error accessing applications table:", appError);
+      console.error("Error accessing applications table (regular client):", appError);
     } else {
-      console.log("Applications table access successful:", appCount);
+      console.log("Applications table access successful (regular client):", appCount);
+    }
+
+    // Test applications table access with admin client
+    console.log("Testing applications table access with admin client:");
+    const { data: adminAppCount, error: adminAppError } = await adminSupabase
+      .from('applications')
+      .select('count()', { count: 'exact' });
+      
+    if (adminAppError) {
+      console.error("Error accessing applications table (admin client):", adminAppError);
+    } else {
+      console.log("Applications table access successful (admin client):", adminAppCount);
     }
     
-    // Get all tables
-    console.log("Fetching table list...");
-    const { data: tables, error: tablesError } = await supabase
+    // Get all tables with admin client
+    console.log("Fetching table list with admin client:");
+    const { data: tables, error: tablesError } = await adminSupabase
       .from('information_schema.tables')
       .select('table_name')
       .eq('table_schema', 'public');
@@ -42,9 +67,9 @@ export async function testSupabaseConnection() {
       console.log("Available tables:", tables);
     }
     
-    // Test direct query
-    console.log("Testing direct applications query...");
-    const { data, error } = await supabase
+    // Test direct query with admin client
+    console.log("Testing direct applications query with admin client:");
+    const { data, error } = await adminSupabase
       .from('applications')
       .select('*')
       .limit(5);

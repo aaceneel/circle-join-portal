@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { adminSupabase } from '@/integrations/supabase/adminClient';
 import Background from '@/components/Background';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
@@ -68,7 +69,7 @@ const Admin = () => {
       console.log("Starting to fetch applications...");
       
       // First check if we can access the table at all
-      const { data: tableData, error: tableError } = await supabase
+      const { data: tableData, error: tableError } = await adminSupabase
         .from('applications')
         .select('count()', { count: 'exact' });
         
@@ -81,9 +82,10 @@ const Admin = () => {
       console.log("Table access check:", tableData);
       
       // Try without ordering first to see if that's causing issues
-      const { data, error } = await supabase
+      const { data, error } = await adminSupabase
         .from('applications')
-        .select('*');
+        .select('*')
+        .order('created_at', { ascending: false });
 
       if (error) {
         console.error("Supabase error:", error);
@@ -132,7 +134,7 @@ const Admin = () => {
   const checkTables = async () => {
     try {
       // This query lists all tables in the public schema that the current user has access to
-      const { data, error } = await supabase
+      const { data, error } = await adminSupabase
         .rpc('list_tables');
       
       if (error) {
@@ -145,7 +147,7 @@ const Admin = () => {
       console.error("Failed to list tables:", err);
       // If RPC function doesn't exist, try a different approach
       try {
-        const { data, error } = await supabase
+        const { data, error } = await adminSupabase
           .from('pg_tables')
           .select('tablename')
           .eq('schemaname', 'public');
