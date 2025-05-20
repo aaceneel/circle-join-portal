@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
@@ -236,7 +235,7 @@ const Index = () => {
           age: formData.age,
           location: formData.country,
           whatsapp: formData.whatsapp,
-          instagram: formData.instagram || null,
+          instagram: formData.instagram,
           occupation: formData.occupation,
           description: formData.description || null,
           income: finalIncome,

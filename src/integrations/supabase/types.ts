@@ -19,6 +19,7 @@ export type Database = {
           goal: string
           id: string
           income: string
+          instagram: string | null
           location: string
           main_challenge: string
           occupation: string
@@ -35,6 +36,7 @@ export type Database = {
           goal: string
           id?: string
           income: string
+          instagram?: string | null
           location: string
           main_challenge: string
           occupation: string
@@ -51,6 +53,7 @@ export type Database = {
           goal?: string
           id?: string
           income?: string
+          instagram?: string | null
           location?: string
           main_challenge?: string
           occupation?: string
