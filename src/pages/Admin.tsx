@@ -5,6 +5,7 @@ import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { formatDistanceToNow } from 'date-fns';
+import { testSupabaseConnection } from '@/utils/supabaseTest';
 
 interface Applicant {
   id: string;
@@ -46,6 +47,7 @@ const Admin = () => {
         setIsAuthenticated(true);
         localStorage.setItem('admin_authenticated', 'true');
         toast.success('Login successful');
+        testSupabaseConnection();
         loadApplicants();
       } else {
         toast.error('Invalid credentials');
@@ -63,16 +65,40 @@ const Admin = () => {
   const loadApplicants = async () => {
     try {
       setIsLoadingData(true);
+      console.log("Starting to fetch applications...");
+      
+      // First check if we can access the table at all
+      const { data: tableData, error: tableError } = await supabase
+        .from('applications')
+        .select('count()', { count: 'exact' });
+        
+      if (tableError) {
+        console.error("Error checking table access:", tableError);
+        toast.error("Error accessing applications table. Check permissions.");
+        return;
+      }
+      
+      console.log("Table access check:", tableData);
+      
+      // Try without ordering first to see if that's causing issues
       const { data, error } = await supabase
         .from('applications')
-        .select('*')
-        .order('created_at', { ascending: false });
+        .select('*');
 
       if (error) {
+        console.error("Supabase error:", error);
         throw error;
       }
 
       console.log("Fetched applications:", data);
+      console.log("Number of applications:", data ? data.length : 0);
+      
+      if (data && data.length > 0) {
+        console.log("First application:", data[0]);
+      } else {
+        console.log("No applications found in the database");
+      }
+      
       setApplicants(data || []);
     } catch (error: any) {
       console.error('Error fetching applicants:', error);
@@ -95,12 +121,46 @@ const Admin = () => {
       const isAuth = localStorage.getItem('admin_authenticated') === 'true';
       setIsAuthenticated(isAuth);
       if (isAuth) {
+        checkTables();
         loadApplicants();
       }
     };
 
     checkAuth();
   }, []);
+
+  const checkTables = async () => {
+    try {
+      // This query lists all tables in the public schema that the current user has access to
+      const { data, error } = await supabase
+        .rpc('list_tables');
+      
+      if (error) {
+        console.error("Error listing tables:", error);
+        return;
+      }
+      
+      console.log("Available tables:", data);
+    } catch (err) {
+      console.error("Failed to list tables:", err);
+      // If RPC function doesn't exist, try a different approach
+      try {
+        const { data, error } = await supabase
+          .from('pg_tables')
+          .select('tablename')
+          .eq('schemaname', 'public');
+          
+        if (error) {
+          console.error("Error with alternative table listing:", error);
+          return;
+        }
+        
+        console.log("Available tables (alternative):", data);
+      } catch (err) {
+        console.error("Failed to list tables with alternative method:", err);
+      }
+    }
+  };
 
   const formatDate = (dateString: string) => {
     try {
@@ -160,12 +220,20 @@ const Admin = () => {
           <div className="glass-card p-6">
             <div className="flex justify-between items-center mb-8">
               <h2 className="text-2xl font-bold text-white/90">Application Dashboard</h2>
-              <button
-                onClick={handleLogout}
-                className="px-4 py-2 rounded-lg text-white/90 bg-dark-medium hover:bg-dark-lighter transition-colors"
-              >
-                Logout
-              </button>
+              <div className="flex space-x-3">
+                <button
+                  onClick={loadApplicants}
+                  className="px-4 py-2 rounded-lg text-white/90 bg-dark-medium hover:bg-dark-lighter transition-colors"
+                >
+                  Refresh
+                </button>
+                <button
+                  onClick={handleLogout}
+                  className="px-4 py-2 rounded-lg text-white/90 bg-dark-medium hover:bg-dark-lighter transition-colors"
+                >
+                  Logout
+                </button>
+              </div>
             </div>
             
             {selectedApplicant ? (
