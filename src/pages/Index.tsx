@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
@@ -242,7 +243,8 @@ const Index = () => {
           trading_experience: formData.tradingExperience,
           expected_earnings: formData.expectedEarnings,
           main_challenge: formData.mainChallenge,
-          open_to_call: formData.openToCall
+          open_to_call: formData.openToCall,
+          goal: '' // Adding an empty goal field to match the schema
         });
         
       if (error) {

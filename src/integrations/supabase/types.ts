@@ -24,6 +24,7 @@ export type Database = {
           main_challenge: string
           occupation: string
           open_to_call: boolean
+          trading_experience: string
           updated_at: string
           whatsapp: string
         }
@@ -41,6 +42,7 @@ export type Database = {
           main_challenge: string
           occupation: string
           open_to_call?: boolean
+          trading_experience?: string
           updated_at?: string
           whatsapp: string
         }
@@ -58,6 +60,7 @@ export type Database = {
           main_challenge?: string
           occupation?: string
           open_to_call?: boolean
+          trading_experience?: string
           updated_at?: string
           whatsapp?: string
         }
