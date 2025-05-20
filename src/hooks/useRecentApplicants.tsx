@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -18,7 +17,10 @@ export default function useRecentApplicants() {
       try {
         setLoading(true);
         const { data, error } = await supabase
-          .rpc('get_recent_applicants');
+          .from('applications')
+          .select('full_name, location, created_at')
+          .order('created_at', { ascending: false })
+          .limit(10);
 
         if (error) {
           throw error;
