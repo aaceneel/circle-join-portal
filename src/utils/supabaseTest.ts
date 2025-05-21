@@ -1,3 +1,4 @@
+
 import { supabase } from '@/integrations/supabase/client';
 import { adminSupabase } from '@/integrations/supabase/adminClient';
 
@@ -10,24 +11,26 @@ export async function testSupabaseConnection() {
     
     // Test basic connection with regular client
     console.log("Testing with regular client:");
-    const { data: versionData, error: versionError } = await supabase
-      .rpc('version');
+    const { data: regularData, error: regularError } = await supabase
+      .from('applications')
+      .select('count()', { count: 'exact' });
       
-    if (versionError) {
-      console.error("Error connecting to Supabase (regular client):", versionError);
+    if (regularError) {
+      console.error("Error connecting to Supabase (regular client):", regularError);
     } else {
-      console.log("Supabase connection successful (regular client):", versionData);
+      console.log("Supabase connection successful (regular client):", regularData);
     }
 
     // Test with admin client
     console.log("Testing with admin client:");
-    const { data: adminVersionData, error: adminVersionError } = await adminSupabase
-      .rpc('version');
+    const { data: adminData, error: adminError } = await adminSupabase
+      .from('applications')
+      .select('count()', { count: 'exact' });
       
-    if (adminVersionError) {
-      console.error("Error connecting to Supabase (admin client):", adminVersionError);
+    if (adminError) {
+      console.error("Error connecting to Supabase (admin client):", adminError);
     } else {
-      console.log("Supabase connection successful (admin client):", adminVersionData);
+      console.log("Supabase connection successful (admin client):", adminData);
     }
     
     // Test applications table access with regular client
@@ -54,17 +57,17 @@ export async function testSupabaseConnection() {
       console.log("Applications table access successful (admin client):", adminAppCount);
     }
     
-    // Get all tables with admin client
-    console.log("Fetching table list with admin client:");
-    const { data: tables, error: tablesError } = await adminSupabase
-      .from('information_schema.tables')
-      .select('table_name')
-      .eq('table_schema', 'public');
+    // Get a sample of application data rather than trying to access system tables
+    console.log("Fetching sample data with admin client:");
+    const { data: sampleData, error: sampleError } = await adminSupabase
+      .from('applications')
+      .select('id, full_name, location, created_at')
+      .limit(5);
       
-    if (tablesError) {
-      console.error("Error fetching tables:", tablesError);
+    if (sampleError) {
+      console.error("Error fetching sample data:", sampleError);
     } else {
-      console.log("Available tables:", tables);
+      console.log("Available sample data:", sampleData);
     }
     
     // Test direct query with admin client
@@ -83,4 +86,4 @@ export async function testSupabaseConnection() {
   } catch (err) {
     console.error("Test failed with exception:", err);
   }
-} 
+}

@@ -123,7 +123,6 @@ const Admin = () => {
       const isAuth = localStorage.getItem('admin_authenticated') === 'true';
       setIsAuthenticated(isAuth);
       if (isAuth) {
-        checkTables();
         loadApplicants();
       }
     };
@@ -133,34 +132,22 @@ const Admin = () => {
 
   const checkTables = async () => {
     try {
-      // This query lists all tables in the public schema that the current user has access to
-      const { data, error } = await adminSupabase
-        .rpc('list_tables');
+      console.log("Checking available tables...");
       
+      // Instead of using list_tables RPC or pg_tables, use a direct query to applications
+      const { data, error } = await adminSupabase
+        .from('applications')
+        .select('count()')
+        .limit(1);
+        
       if (error) {
-        console.error("Error listing tables:", error);
+        console.error("Error checking tables:", error);
         return;
       }
       
-      console.log("Available tables:", data);
+      console.log("Applications table is available");
     } catch (err) {
-      console.error("Failed to list tables:", err);
-      // If RPC function doesn't exist, try a different approach
-      try {
-        const { data, error } = await adminSupabase
-          .from('pg_tables')
-          .select('tablename')
-          .eq('schemaname', 'public');
-          
-        if (error) {
-          console.error("Error with alternative table listing:", error);
-          return;
-        }
-        
-        console.log("Available tables (alternative):", data);
-      } catch (err) {
-        console.error("Failed to list tables with alternative method:", err);
-      }
+      console.error("Failed to check tables:", err);
     }
   };
 
