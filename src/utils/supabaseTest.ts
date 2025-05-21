@@ -33,18 +33,6 @@ export async function testSupabaseConnection() {
       console.log("Supabase connection successful (admin client):", adminData);
     }
     
-    // Test applications table access with regular client
-    console.log("Testing applications table access with regular client:");
-    const { data: appCount, error: appError } = await supabase
-      .from('applications')
-      .select('count()', { count: 'exact' });
-      
-    if (appError) {
-      console.error("Error accessing applications table (regular client):", appError);
-    } else {
-      console.log("Applications table access successful (regular client):", appCount);
-    }
-
     // Test applications table access with admin client
     console.log("Testing applications table access with admin client:");
     const { data: adminAppCount, error: adminAppError } = await adminSupabase
@@ -57,7 +45,7 @@ export async function testSupabaseConnection() {
       console.log("Applications table access successful (admin client):", adminAppCount);
     }
     
-    // Get a sample of application data rather than trying to access system tables
+    // Get a sample of application data
     console.log("Fetching sample data with admin client:");
     const { data: sampleData, error: sampleError } = await adminSupabase
       .from('applications')
@@ -68,19 +56,6 @@ export async function testSupabaseConnection() {
       console.error("Error fetching sample data:", sampleError);
     } else {
       console.log("Available sample data:", sampleData);
-    }
-    
-    // Test direct query with admin client
-    console.log("Testing direct applications query with admin client:");
-    const { data, error } = await adminSupabase
-      .from('applications')
-      .select('*')
-      .limit(5);
-      
-    if (error) {
-      console.error("Error querying applications:", error);
-    } else {
-      console.log(`Found ${data?.length || 0} applications:`, data);
     }
     
   } catch (err) {

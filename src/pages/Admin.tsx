@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { adminSupabase } from '@/integrations/supabase/adminClient';
@@ -73,22 +72,7 @@ const Admin = () => {
       setError(null);
       console.log("Starting to fetch applications...");
       
-      // First check if we can access the table at all
-      const { data: tableData, error: tableError } = await adminSupabase
-        .from('applications')
-        .select('count()', { count: 'exact' });
-        
-      if (tableError) {
-        console.error("Error checking table access:", tableError);
-        setError("Error accessing applications table. Make sure your Supabase service role key has proper permissions.");
-        toast.error("Error accessing applications table. Check permissions.");
-        setIsLoadingData(false);
-        return;
-      }
-      
-      console.log("Table access check:", tableData);
-      
-      // Try without ordering first to see if that's causing issues
+      // Attempt to fetch applications directly without checking table access first
       const { data, error } = await adminSupabase
         .from('applications')
         .select('*')
@@ -96,9 +80,8 @@ const Admin = () => {
 
       if (error) {
         console.error("Supabase error:", error);
-        setError(`Failed to load data: ${error.message}`);
-        toast.error("Failed to load applicants data");
-        setIsLoadingData(false);
+        setError(`Failed to load data: ${error.message}. Please check your service role key and network connection.`);
+        toast.error("Failed to access applications data");
         return;
       }
 
@@ -142,27 +125,6 @@ const Admin = () => {
 
     checkAuth();
   }, []);
-
-  const checkTables = async () => {
-    try {
-      console.log("Checking available tables...");
-      
-      // Instead of using list_tables RPC or pg_tables, use a direct query to applications
-      const { data, error } = await adminSupabase
-        .from('applications')
-        .select('count()')
-        .limit(1);
-        
-      if (error) {
-        console.error("Error checking tables:", error);
-        return;
-      }
-      
-      console.log("Applications table is available");
-    } catch (err) {
-      console.error("Failed to check tables:", err);
-    }
-  };
 
   const formatDate = (dateString: string) => {
     try {
