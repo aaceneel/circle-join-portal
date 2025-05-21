@@ -17,3 +17,26 @@ export const adminSupabase = createClient<Database>(
     }
   }
 ); 
+
+// Function to check if a user is an admin
+export async function isUserAdmin(userId: string): Promise<boolean> {
+  if (!userId) return false;
+  
+  try {
+    const { data, error } = await adminSupabase
+      .from('admin_users')
+      .select('*')
+      .eq('user_id', userId)
+      .single();
+      
+    if (error) {
+      console.error("Error checking admin status:", error);
+      return false;
+    }
+    
+    return !!data;
+  } catch (e) {
+    console.error("Failed to check admin status:", e);
+    return false;
+  }
+}

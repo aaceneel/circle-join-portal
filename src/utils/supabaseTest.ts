@@ -58,6 +58,18 @@ export async function testSupabaseConnection() {
       console.log("Available sample data:", sampleData);
     }
     
+    // Test admin_users table
+    console.log("Checking admin_users table:");
+    const { data: adminUsers, error: adminUsersError } = await adminSupabase
+      .from('admin_users')
+      .select('*');
+      
+    if (adminUsersError) {
+      console.error("Error accessing admin_users table:", adminUsersError);
+    } else {
+      console.log("Admin users found:", adminUsers?.length || 0);
+    }
+    
   } catch (err) {
     console.error("Test failed with exception:", err);
   }
