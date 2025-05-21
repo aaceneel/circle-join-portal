@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { adminSupabase } from '@/integrations/supabase/adminClient';
@@ -32,6 +33,7 @@ const Admin = () => {
   const [applicants, setApplicants] = useState<Applicant[]>([]);
   const [isLoadingData, setIsLoadingData] = useState(false);
   const [selectedApplicant, setSelectedApplicant] = useState<Applicant | null>(null);
+  const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
 
   const hardcodedCredentials = {
@@ -42,6 +44,7 @@ const Admin = () => {
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
+    setError(null);
 
     setTimeout(() => {
       if (username === hardcodedCredentials.username && password === hardcodedCredentials.password) {
@@ -52,6 +55,7 @@ const Admin = () => {
         loadApplicants();
       } else {
         toast.error('Invalid credentials');
+        setError('Invalid username or password');
       }
       setIsLoading(false);
     }, 800);
@@ -66,6 +70,7 @@ const Admin = () => {
   const loadApplicants = async () => {
     try {
       setIsLoadingData(true);
+      setError(null);
       console.log("Starting to fetch applications...");
       
       // First check if we can access the table at all
@@ -75,7 +80,9 @@ const Admin = () => {
         
       if (tableError) {
         console.error("Error checking table access:", tableError);
+        setError("Error accessing applications table. Make sure your Supabase service role key has proper permissions.");
         toast.error("Error accessing applications table. Check permissions.");
+        setIsLoadingData(false);
         return;
       }
       
@@ -89,7 +96,10 @@ const Admin = () => {
 
       if (error) {
         console.error("Supabase error:", error);
-        throw error;
+        setError(`Failed to load data: ${error.message}`);
+        toast.error("Failed to load applicants data");
+        setIsLoadingData(false);
+        return;
       }
 
       console.log("Fetched applications:", data);
@@ -97,13 +107,16 @@ const Admin = () => {
       
       if (data && data.length > 0) {
         console.log("First application:", data[0]);
+        setApplicants(data);
+        toast.success(`Loaded ${data.length} applications successfully`);
       } else {
         console.log("No applications found in the database");
+        setApplicants([]);
+        toast.info("No applications found in the database");
       }
-      
-      setApplicants(data || []);
     } catch (error: any) {
       console.error('Error fetching applicants:', error);
+      setError(`Unexpected error: ${error.message}`);
       toast.error('Failed to load applicants');
     } finally {
       setIsLoadingData(false);
@@ -195,6 +208,12 @@ const Admin = () => {
                 />
               </div>
               
+              {error && (
+                <div className="p-3 bg-red-500/20 border border-red-500/50 rounded-md">
+                  <p className="text-white/90 text-sm">{error}</p>
+                </div>
+              )}
+              
               <button
                 type="submit"
                 disabled={isLoading}
@@ -213,8 +232,9 @@ const Admin = () => {
                 <button
                   onClick={loadApplicants}
                   className="px-4 py-2 rounded-lg text-white/90 bg-dark-medium hover:bg-dark-lighter transition-colors"
+                  disabled={isLoadingData}
                 >
-                  Refresh
+                  {isLoadingData ? 'Loading...' : 'Refresh'}
                 </button>
                 <button
                   onClick={handleLogout}
@@ -224,6 +244,15 @@ const Admin = () => {
                 </button>
               </div>
             </div>
+            
+            {error && (
+              <div className="p-4 mb-6 bg-red-500/20 border border-red-500/50 rounded-md">
+                <p className="text-white/90">{error}</p>
+                <p className="text-white/70 text-sm mt-2">
+                  Check that your Supabase service role key has proper permissions to access the applications table.
+                </p>
+              </div>
+            )}
             
             {selectedApplicant ? (
               <div className="glass-card p-6 mb-8">
@@ -304,7 +333,7 @@ const Admin = () => {
                                 {applicant.location} • {applicant.age}
                               </CardDescription>
                             </div>
-                            <span className={`inline-flex h-2.5 w-2.5 rounded-full ${applicant.open_to_call ? 'bg-gray-400' : 'bg-gray-600'}`}></span>
+                            <span className={`inline-flex h-2.5 w-2.5 rounded-full ${applicant.open_to_call ? 'bg-green-400' : 'bg-gray-600'}`}></span>
                           </div>
                         </CardHeader>
                         <CardContent>
