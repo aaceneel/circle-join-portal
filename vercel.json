@@ -7,10 +7,5 @@
   ],
   "builds": [
     { "src": "package.json", "use": "@vercel/static-build", "config": { "distDir": "dist" } }
-  ],
-  "routes": [
-    { "src": "/landing", "dest": "/landing.html" },
-    { "src": "/landing/", "dest": "/landing.html" },
-    { "src": "/(.*)", "dest": "/index.html" }
   ]
 } 
