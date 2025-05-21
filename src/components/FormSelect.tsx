@@ -31,11 +31,21 @@ const FormSelect: React.FC<FormSelectProps> = ({
         {...props}
       >
         <option value="" disabled>Select an option</option>
-        {options.map((option) => (
-          <option key={option.value} value={option.value}>
-            {option.label}
-          </option>
-        ))}
+        {options.length > 50 ? (
+          <optgroup label="All Options">
+            {options.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </optgroup>
+        ) : (
+          options.map((option) => (
+            <option key={option.value} value={option.value}>
+              {option.label}
+            </option>
+          ))
+        )}
       </select>
       {hint && <p className="mt-1 text-sm text-white/50 italic">{hint}</p>}
       {error && <p className="mt-1 text-sm text-red-400">{error}</p>}
