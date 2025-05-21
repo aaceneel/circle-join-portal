@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { cn } from '@/lib/utils';
 interface FormHeaderProps {
@@ -10,7 +9,7 @@ const FormHeader: React.FC<FormHeaderProps> = ({
   return <div className={cn('text-center space-y-3', className)}>
       <div className="inline-block">
         <div className="relative">
-          <img alt="RAX Logo" src="/lovable-uploads/74ead4a0-be19-4ca2-87ce-89f34e918d7b.png" className="h-20 w-auto mx-auto object-cover" />
+          <img alt="RAX Logo" className="h-20 w-auto mx-auto object-cover" src="/lovable-uploads/5cceb7fd-441c-4363-8de5-74ce0022cd53.png" />
           <div className="absolute -inset-1 blur-xl opacity-30 bg-glow-gradient rounded-full -z-10"></div>
         </div>
       </div>
