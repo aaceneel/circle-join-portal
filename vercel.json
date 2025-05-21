@@ -3,6 +3,8 @@
   "rewrites": [
     { "source": "/", "destination": "/landing.html" },
     { "source": "/landing", "destination": "/landing.html" },
-    { "source": "/landing/", "destination": "/landing.html" }
+    { "source": "/landing/", "destination": "/landing.html" },
+    { "source": "/admin", "destination": "/admin.html" },
+    { "source": "/admin/", "destination": "/admin.html" }
   ]
 } 
