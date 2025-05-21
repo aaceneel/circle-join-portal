@@ -1,13 +1,11 @@
 {
-  "cleanUrls": true,
   "rewrites": [
     { "source": "/landing", "destination": "/landing.html" },
-    { "source": "/landing/", "destination": "/landing.html" },
-    { "source": "/admin", "destination": "/index.html" },
-    { "source": "/admin/", "destination": "/index.html" },
     { "source": "/(.*)", "destination": "/index.html" }
   ],
-  "builds": [
-    { "src": "package.json", "use": "@vercel/static-build", "config": { "distDir": "dist" } }
+  "routes": [
+    { "handle": "filesystem" },
+    { "src": "/landing", "dest": "/landing.html" },
+    { "src": "/(.*)", "dest": "/index.html" }
   ]
 } 
