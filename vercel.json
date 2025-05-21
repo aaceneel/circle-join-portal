@@ -2,10 +2,5 @@
   "rewrites": [
     { "source": "/landing", "destination": "/landing.html" },
     { "source": "/(.*)", "destination": "/index.html" }
-  ],
-  "routes": [
-    { "handle": "filesystem" },
-    { "src": "/landing", "dest": "/landing.html" },
-    { "src": "/(.*)", "dest": "/index.html" }
   ]
 } 
