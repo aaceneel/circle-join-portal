@@ -1,16 +1,13 @@
 
 import React from 'react';
 import { cn } from '@/lib/utils';
-import useRecentApplicants from '@/hooks/useRecentApplicants';
 
 interface RecentApplicantsProps {
   className?: string;
 }
 
 const RecentApplicants: React.FC<RecentApplicantsProps> = ({ className }) => {
-  const { applicants, loading } = useRecentApplicants();
-  
-  // Default data to mix with real applicants
+  // Fake applicants data for the ticker
   const fakeApplicants = [
     { full_name: 'Sarah J.', location: 'New York, USA', created_at: new Date().toISOString() },
     { full_name: 'Michael T.', location: 'London, UK', created_at: new Date().toISOString() },
@@ -22,17 +19,17 @@ const RecentApplicants: React.FC<RecentApplicantsProps> = ({ className }) => {
     { full_name: 'Olivia S.', location: 'Cape Town, South Africa', created_at: new Date().toISOString() },
     { full_name: 'Noah R.', location: 'Dubai, UAE', created_at: new Date().toISOString() },
     { full_name: 'Sofia M.', location: 'Mumbai, India', created_at: new Date().toISOString() },
+    { full_name: 'Lucas B.', location: 'São Paulo, Brazil', created_at: new Date().toISOString() },
+    { full_name: 'Isabella C.', location: 'Barcelona, Spain', created_at: new Date().toISOString() },
+    { full_name: 'Chen W.', location: 'Singapore', created_at: new Date().toISOString() },
+    { full_name: 'Marie D.', location: 'Montreal, Canada', created_at: new Date().toISOString() },
+    { full_name: 'Ahmed H.', location: 'Cairo, Egypt', created_at: new Date().toISOString() },
   ];
-
-  // Combine real and fake applicants
-  const displayApplicants = loading || applicants.length === 0 
-    ? fakeApplicants 
-    : [...applicants, ...fakeApplicants.slice(0, 5)]; // Mix real with 5 fake applicants
   
   return (
     <div className={cn('w-full overflow-hidden', className)}>
       <div className="animate-marquee whitespace-nowrap flex space-x-6">
-        {displayApplicants.map((applicant, index) => (
+        {fakeApplicants.map((applicant, index) => (
           <div 
             key={index}
             className="inline-flex items-center bg-dark-lighter px-3 py-1.5 rounded-full"
@@ -45,7 +42,7 @@ const RecentApplicants: React.FC<RecentApplicantsProps> = ({ className }) => {
         ))}
         
         {/* Duplicate items to ensure continuous scroll */}
-        {displayApplicants.map((applicant, index) => (
+        {fakeApplicants.map((applicant, index) => (
           <div 
             key={`dup-${index}`}
             className="inline-flex items-center bg-dark-lighter px-3 py-1.5 rounded-full"
