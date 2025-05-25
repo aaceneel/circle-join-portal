@@ -25,7 +25,15 @@ export type Database = {
           id?: string
           user_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "admin_users_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "user_admin_status"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       applications: {
         Row: {
@@ -86,7 +94,16 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      user_admin_status: {
+        Row: {
+          admin_granted_at: string | null
+          email: string | null
+          id: string | null
+          is_admin: boolean | null
+          user_created_at: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       add_admin_user: {
@@ -103,6 +120,10 @@ export type Database = {
       }
       is_admin: {
         Args: { user_id: string }
+        Returns: boolean
+      }
+      toggle_admin_status: {
+        Args: { user_id: string; grant_admin: boolean }
         Returns: boolean
       }
     }
