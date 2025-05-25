@@ -5,19 +5,25 @@ export async function runMigrations() {
   try {
     console.log("Running migrations...");
 
-    // Check if admin_users table exists using raw SQL query instead of information_schema
-    const { data: tablesCheck, error: tablesCheckError } = await adminSupabase
-      .rpc('get_recent_applicants')
-      .then(() => ({ data: true, error: null }))
-      .catch(() => ({ data: null, error: 'Table might not exist' }));
+    // Check if admin_users table exists by trying to query it
+    let tablesCheck;
+    let tablesCheckError;
+    
+    try {
+      const result = await adminSupabase.rpc('get_recent_applicants');
+      tablesCheck = { data: true, error: null };
+    } catch (error) {
+      tablesCheck = { data: null, error: 'Table might not exist' };
+      tablesCheckError = error;
+    }
 
     // If we can't query get_recent_applicants function, it probably means our tables aren't set up
-    if (tablesCheckError) {
+    if (tablesCheck.error) {
       console.log("Database might not be fully set up, creating tables...");
       
-      // Execute SQL directly using fetch instead of .rpc
+      // Use the service role key directly from the adminClient configuration
       const supabaseUrl = "https://cvvjiodqarscubcbbxbt.supabase.co";
-      const supabaseKey = adminSupabase.supabaseKey;
+      const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN2dmppb2RxYXJzY3ViY2JieGJ0Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc0NzY0NzQ0NSwiZXhwIjoyMDYzMjIzNDQ1fQ.8NvBjBSuIwGnOm7HnOjM1gLEnmzSfODkPLFmR7WMNOY";
       
       const response = await fetch(`${supabaseUrl}/rest/v1/rpc/exec_sql`, {
         method: 'POST',
@@ -83,10 +89,11 @@ export async function runMigrations() {
         })
       });
       
-      const result = await response.json();
       if (response.ok) {
+        const result = await response.json();
         console.log("Migration successful:", result);
       } else {
+        const result = await response.json();
         console.error("Migration failed:", result);
       }
     } else {
