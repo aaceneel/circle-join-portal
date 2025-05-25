@@ -101,6 +101,10 @@ export type Database = {
           created_at: string
         }[]
       }
+      is_admin: {
+        Args: { user_id: string }
+        Returns: boolean
+      }
     }
     Enums: {
       [_ in never]: never

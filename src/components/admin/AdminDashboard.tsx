@@ -4,6 +4,7 @@ import { adminSupabase } from '@/integrations/supabase/adminClient';
 import { toast } from 'sonner';
 import ApplicantCard from './ApplicantCard';
 import ApplicantDetails from './ApplicantDetails';
+import AdminUserManager from './AdminUserManager';
 import { useAuth } from '@/contexts/AuthContext';
 
 interface Applicant {
@@ -84,7 +85,7 @@ const AdminDashboard = () => {
   return (
     <div className="glass-card p-6">
       <div className="flex justify-between items-center mb-8">
-        <h2 className="text-2xl font-bold text-white/90">Application Dashboard</h2>
+        <h2 className="text-2xl font-bold text-white/90">Admin Dashboard</h2>
         <div className="flex space-x-3">
           <button
             onClick={loadApplicants}
@@ -101,6 +102,8 @@ const AdminDashboard = () => {
           </button>
         </div>
       </div>
+      
+      <AdminUserManager />
       
       {error && (
         <div className="p-4 mb-6 bg-red-500/20 border border-red-500/50 rounded-md">
@@ -119,6 +122,7 @@ const AdminDashboard = () => {
         </div>
       ) : (
         <div>
+          <h3 className="text-xl font-bold text-white/90 mb-4">Applications ({applicants.length})</h3>
           {applicants.length === 0 ? (
             <div className="text-center py-12">
               <p className="text-white/60">No applications found</p>
