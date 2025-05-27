@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { toast } from 'sonner';
+import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { FormData, initialFormData } from '@/types/formTypes';
 import { countries } from '@/utils/countryData';
@@ -11,7 +12,6 @@ import FormHeader from '@/components/FormHeader';
 import FormStep from '@/components/FormStep';
 import ProgressBar from '@/components/ProgressBar';
 import RecentApplicants from '@/components/RecentApplicants';
-import SuccessPage from '@/components/SuccessPage';
 import FormNavigation from '@/components/form/FormNavigation';
 
 // Form Steps Components
@@ -25,9 +25,9 @@ const Index = () => {
   const [formData, setFormData] = useState<FormData>(initialFormData);
   const [currentStep, setCurrentStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isSubmitted, setIsSubmitted] = useState(false);
   const [formErrors, setFormErrors] = useState<Partial<Record<keyof FormData, string>>>({});
   const [customIncome, setCustomIncome] = useState('');
+  const navigate = useNavigate();
   
   const totalSteps = 4;
   const { validateStep } = useFormValidation();
@@ -143,8 +143,8 @@ const Index = () => {
         throw error;
       }
       
-      // Show success
-      setIsSubmitted(true);
+      // Redirect to received page
+      navigate('/received');
       toast.success("Application submitted successfully!");
       
     } catch (error: any) {
@@ -160,88 +160,82 @@ const Index = () => {
       <Background />
       
       <div className="w-full max-w-2xl mx-auto">
-        {!isSubmitted ? (
-          <div className="glass-card card-floating p-6 md:p-8">
-            <FormHeader className="mb-8" />
-            
-            <ProgressBar 
-              currentStep={currentStep} 
-              totalSteps={totalSteps} 
-              className="mb-8" 
-            />
-            
-            <div className="space-y-6">
-              {/* Step 1: Basic Information */}
-              <FormStep
-                isActive={currentStep === 1}
-                isCompleted={currentStep > 1}
-              >
-                <BasicInfoStep 
-                  formData={formData} 
-                  formErrors={formErrors} 
-                  handleChange={handleChange} 
-                />
-              </FormStep>
-              
-              {/* Step 2: Occupation Information */}
-              <FormStep
-                isActive={currentStep === 2}
-                isCompleted={currentStep > 2}
-              >
-                <OccupationStep 
-                  formData={formData} 
-                  formErrors={formErrors} 
-                  handleChange={handleChange}
-                  customIncome={customIncome}
-                  setCustomIncome={setCustomIncome}
-                />
-              </FormStep>
-              
-              {/* Step 3: Trading Experience */}
-              <FormStep
-                isActive={currentStep === 3}
-                isCompleted={currentStep > 3}
-              >
-                <TradingExperienceStep 
-                  formData={formData} 
-                  formErrors={formErrors} 
-                  handleChange={handleChange}
-                />
-              </FormStep>
-              
-              {/* Step 4: Final Questions */}
-              <FormStep
-                isActive={currentStep === 4}
-                isCompleted={currentStep > 4}
-              >
-                <FinalQuestionStep 
-                  formData={formData} 
-                  formErrors={formErrors} 
-                  handleChange={handleChange}
-                  handleToggleChange={handleToggleChange}
-                />
-              </FormStep>
-              
-              <FormNavigation
-                currentStep={currentStep}
-                totalSteps={totalSteps}
-                isSubmitting={isSubmitting}
-                goToPrevStep={goToPrevStep}
-                goToNextStep={goToNextStep}
+        <div className="glass-card card-floating p-6 md:p-8">
+          <FormHeader className="mb-8" />
+          
+          <ProgressBar 
+            currentStep={currentStep} 
+            totalSteps={totalSteps} 
+            className="mb-8" 
+          />
+          
+          <div className="space-y-6">
+            {/* Step 1: Basic Information */}
+            <FormStep
+              isActive={currentStep === 1}
+              isCompleted={currentStep > 1}
+            >
+              <BasicInfoStep 
+                formData={formData} 
+                formErrors={formErrors} 
+                handleChange={handleChange} 
               />
-            </div>
+            </FormStep>
             
-            <div className="mt-8 text-center text-white/50 text-sm">
-              Over 9,800+ ambitious traders have already applied
-            </div>
+            {/* Step 2: Occupation Information */}
+            <FormStep
+              isActive={currentStep === 2}
+              isCompleted={currentStep > 2}
+            >
+              <OccupationStep 
+                formData={formData} 
+                formErrors={formErrors} 
+                handleChange={handleChange}
+                customIncome={customIncome}
+                setCustomIncome={setCustomIncome}
+              />
+            </FormStep>
             
-            <RecentApplicants className="mt-6" />
+            {/* Step 3: Trading Experience */}
+            <FormStep
+              isActive={currentStep === 3}
+              isCompleted={currentStep > 3}
+            >
+              <TradingExperienceStep 
+                formData={formData} 
+                formErrors={formErrors} 
+                handleChange={handleChange}
+              />
+            </FormStep>
+            
+            {/* Step 4: Final Questions */}
+            <FormStep
+              isActive={currentStep === 4}
+              isCompleted={currentStep > 4}
+            >
+              <FinalQuestionStep 
+                formData={formData} 
+                formErrors={formErrors} 
+                handleChange={handleChange}
+                handleToggleChange={handleToggleChange}
+              />
+            </FormStep>
+            
+            <FormNavigation
+              currentStep={currentStep}
+              totalSteps={totalSteps}
+              isSubmitting={isSubmitting}
+              goToPrevStep={goToPrevStep}
+              goToNextStep={goToNextStep}
+            />
           </div>
-        ) : (
-          <div className="glass-card card-floating p-6 md:p-8">
-            <SuccessPage />
+          
+          <div className="mt-8 text-center text-white/50 text-sm">
+            Over 9,800+ ambitious traders have already applied
           </div>
-        )}
+          
+          <RecentApplicants className="mt-6" />
+        </div>
       </div>
     </div>
   );
