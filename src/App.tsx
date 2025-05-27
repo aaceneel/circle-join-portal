@@ -8,6 +8,7 @@ import Index from "./pages/Index";
 import Admin from "./pages/Admin";
 import ThankYou from "./pages/ThankYou";
 import NotFound from "./pages/NotFound";
+import Received from "./pages/Received";
 import { AuthProvider } from "./contexts/AuthContext";
 
 const queryClient = new QueryClient();
@@ -23,6 +24,7 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/admin" element={<Admin />} />
             <Route path="/thankyou" element={<ThankYou />} />
+            <Route path="/received" element={<Received />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
