@@ -25,6 +25,7 @@ const Index = () => {
   const [formData, setFormData] = useState<FormData>(initialFormData);
   const [currentStep, setCurrentStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isTransitioning, setIsTransitioning] = useState(false);
   const [formErrors, setFormErrors] = useState<Partial<Record<keyof FormData, string>>>({});
   const [customIncome, setCustomIncome] = useState('');
   const navigate = useNavigate();
@@ -112,7 +113,7 @@ const Index = () => {
     }
   };
   
-  // Handle form submission
+  // Handle form submission with smooth transition
   const handleSubmit = async () => {
     try {
       setIsSubmitting(true);
@@ -143,14 +144,18 @@ const Index = () => {
         throw error;
       }
       
-      // Redirect to received page
-      navigate('/received');
+      // Show success message and start transition
       toast.success("Application submitted successfully!");
+      setIsTransitioning(true);
+      
+      // Wait for transition animation before redirect
+      setTimeout(() => {
+        navigate('/received');
+      }, 800);
       
     } catch (error: any) {
       console.error('Error submitting form:', error);
       toast.error(error.message || "An error occurred. Please try again.");
-    } finally {
       setIsSubmitting(false);
     }
   };
@@ -159,7 +164,18 @@ const Index = () => {
     <div className="min-h-screen w-full flex flex-col items-center justify-center py-8 px-4">
       <Background />
       
-      <div className="w-full max-w-2xl mx-auto">
+      {/* Transition overlay */}
+      {isTransitioning && (
+        <div className="fixed inset-0 z-50 bg-dark/90 backdrop-blur-sm flex items-center justify-center transition-all duration-800 ease-in-out">
+          <div className="text-center space-y-4 animate-fade-in">
+            <div className="w-16 h-16 border-4 border-glow-purple/30 border-t-glow-purple rounded-full animate-spin mx-auto" />
+            <div className="text-white text-lg font-medium">Processing your application...</div>
+            <div className="text-white/70 text-sm">Redirecting you to confirmation page</div>
+          </div>
+        </div>
+      )}
+      
+      <div className={`w-full max-w-2xl mx-auto transition-all duration-500 ${isTransitioning ? 'opacity-50 scale-95' : 'opacity-100 scale-100'}`}>
         <div className="glass-card card-floating p-6 md:p-8">
           <FormHeader className="mb-8" />
           
@@ -224,7 +240,7 @@ const Index = () => {
             <FormNavigation
               currentStep={currentStep}
               totalSteps={totalSteps}
-              isSubmitting={isSubmitting}
+              isSubmitting={isSubmitting || isTransitioning}
               goToPrevStep={goToPrevStep}
               goToNextStep={goToNextStep}
             />
