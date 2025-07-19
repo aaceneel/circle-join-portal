@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { adminSupabase } from '@/integrations/supabase/adminClient';
 import { toast } from 'sonner';
@@ -13,13 +12,10 @@ interface Applicant {
   age: string;
   location: string;
   whatsapp: string;
-  occupation: string;
-  description: string;
-  income: string;
-  goal: string;
-  expected_earnings: string;
-  main_challenge: string;
-  open_to_call: boolean;
+  instagram: string;
+  content_topic: string;
+  proud_link: string;
+  follower_count: string;
   created_at: string;
 }
 

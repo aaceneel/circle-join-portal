@@ -9,13 +9,10 @@ interface Applicant {
   age: string;
   location: string;
   whatsapp: string;
-  occupation: string;
-  description: string;
-  income: string;
-  goal: string;
-  expected_earnings: string;
-  main_challenge: string;
-  open_to_call: boolean;
+  instagram: string;
+  content_topic: string;
+  proud_link: string;
+  follower_count: string;
   created_at: string;
 }
 
@@ -42,8 +39,8 @@ const ApplicantTable: React.FC<ApplicantTableProps> = ({ applicants, onViewDetai
             <TableHead className="text-white/80">Age</TableHead>
             <TableHead className="text-white/80">Location</TableHead>
             <TableHead className="text-white/80">WhatsApp</TableHead>
-            <TableHead className="text-white/80">Occupation</TableHead>
-            <TableHead className="text-white/80">Open to Call</TableHead>
+            <TableHead className="text-white/80">Instagram</TableHead>
+            <TableHead className="text-white/80">Followers</TableHead>
             <TableHead className="text-white/80">Submitted</TableHead>
             <TableHead className="text-white/80">Actions</TableHead>
           </TableRow>
@@ -64,13 +61,10 @@ const ApplicantTable: React.FC<ApplicantTableProps> = ({ applicants, onViewDetai
                 {applicant.whatsapp}
               </TableCell>
               <TableCell className="text-white/70">
-                {applicant.occupation || 'Not specified'}
+                {applicant.instagram || 'Not provided'}
               </TableCell>
               <TableCell className="text-white/70">
-                <span className={`inline-flex items-center gap-2`}>
-                  <span className={`h-2 w-2 rounded-full ${applicant.open_to_call ? 'bg-green-400' : 'bg-gray-600'}`}></span>
-                  {applicant.open_to_call ? 'Yes' : 'No'}
-                </span>
+                {applicant.follower_count}
               </TableCell>
               <TableCell className="text-white/60 text-sm">
                 {formatDate(applicant.created_at)}

@@ -7,13 +7,10 @@ interface Applicant {
   age: string;
   location: string;
   whatsapp: string;
-  occupation: string;
-  description: string;
-  income: string;
-  goal: string;
-  expected_earnings: string;
-  main_challenge: string;
-  open_to_call: boolean;
+  instagram: string;
+  content_topic: string;
+  proud_link: string;
+  follower_count: string;
   created_at: string;
 }
 
@@ -49,34 +46,27 @@ const ApplicantDetails: React.FC<ApplicantDetailsProps> = ({ applicant, onClose 
           <p className="text-white/90">{applicant.whatsapp}</p>
         </div>
         <div>
-          <p className="text-white/60 mb-1">Occupation</p>
-          <p className="text-white/90">{applicant.occupation}</p>
+          <p className="text-white/60 mb-1">Instagram</p>
+          <p className="text-white/90">{applicant.instagram || 'Not provided'}</p>
         </div>
         <div>
-          <p className="text-white/60 mb-1">Income</p>
-          <p className="text-white/90">{applicant.income}</p>
+          <p className="text-white/60 mb-1">Follower Count</p>
+          <p className="text-white/90">{applicant.follower_count}</p>
         </div>
         <div>
-          <p className="text-white/60 mb-1">Expected Earnings</p>
-          <p className="text-white/90">{applicant.expected_earnings}</p>
-        </div>
-        <div>
-          <p className="text-white/60 mb-1">Goal</p>
-          <p className="text-white/90">{applicant.goal}</p>
-        </div>
-        <div>
-          <p className="text-white/60 mb-1">Open to Call</p>
-          <p className="text-white/90">
-            {applicant.open_to_call ? 'Yes' : 'No'}
-          </p>
+          <p className="text-white/60 mb-1">Proud Link</p>
+          <a 
+            href={applicant.proud_link} 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="text-blue-400 hover:text-blue-300 underline break-all"
+          >
+            {applicant.proud_link}
+          </a>
         </div>
         <div className="col-span-1 md:col-span-2">
-          <p className="text-white/60 mb-1">Description</p>
-          <p className="text-white/90">{applicant.description}</p>
-        </div>
-        <div className="col-span-1 md:col-span-2">
-          <p className="text-white/60 mb-1">Main Challenge</p>
-          <p className="text-white/90">{applicant.main_challenge}</p>
+          <p className="text-white/60 mb-1">Content Topic</p>
+          <p className="text-white/90">{applicant.content_topic}</p>
         </div>
       </div>
     </div>
