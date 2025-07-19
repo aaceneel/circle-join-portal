@@ -63,16 +63,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   
   const checkAdminStatus = async (user: User) => {
     try {
-      console.log("Checking admin status for:", user.email);
+      console.log("Checking admin status for:", user.email, "ID:", user.id);
       
-      // Special case for arcrxx@gmail.com - always grant admin access
+      // Special case for arcrxx@gmail.com - always grant admin access immediately
       if (user.email === 'arcrxx@gmail.com') {
-        console.log("Granting admin access to arcrxx@gmail.com");
+        console.log("Granting admin access to arcrxx@gmail.com (direct match)");
         setIsAdmin(true);
         setIsLoading(false);
         return;
       }
       
+      // For other users, check the admin table
       const adminStatus = await isUserAdmin(user.id);
       console.log("Admin status result:", adminStatus);
       setIsAdmin(adminStatus);
@@ -80,6 +81,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       console.error("Error checking admin status:", error);
       // If there's an error but user is arcrxx@gmail.com, grant access anyway
       if (user.email === 'arcrxx@gmail.com') {
+        console.log("Error fallback: granting admin access to arcrxx@gmail.com");
         setIsAdmin(true);
       } else {
         setIsAdmin(false);
