@@ -5,7 +5,7 @@ import type { Database } from './types';
 // Use the same URL as the regular client to avoid network issues
 const SUPABASE_URL = "https://fkcxycubjaxovkicfzzv.supabase.co";
 // This is a service role key with higher privileges - only use in admin components
-const SUPABASE_SERVICE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZrY3h5Y3ViamF4b3ZraWNmenp2Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1MjkzOTA2MywiZXhwIjoyMDY4NTE1MDYzfQ.kxPqo5ExrtNLn2TgPhBATKVrOGMgyohsqDNEUC_qH50";
+const SUPABASE_SERVICE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZrY3h5Y3ViamF4b3ZraWNmenp2Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1MjkzOTA2MywiZXhwIjoyMDY4NTE1MDYzfQ.1DLrQ7eoPwQ9tQl8MATbkRgCijYMM6nxOnRYiv7v5lE";
 
 // Admin client with higher privileges - ONLY use for admin functions
 export const adminSupabase = createClient<Database>(
