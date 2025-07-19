@@ -13,6 +13,8 @@ export interface FormData {
   proudLink: string;
   followerCount: string;
   openToCall: boolean;
+  tradingExperience: string;
+  expectedEarnings: string;
 }
 
 // Initial form data
@@ -29,4 +31,6 @@ export const initialFormData: FormData = {
   proudLink: '',
   followerCount: '',
   openToCall: true,
+  tradingExperience: '',
+  expectedEarnings: '',
 };

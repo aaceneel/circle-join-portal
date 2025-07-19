@@ -38,3 +38,22 @@ export const followerCountOptions = [
   { value: '500k-1m', label: '500,000 - 1M' },
   { value: '1m+', label: '1M+' },
 ];
+
+// Trading experience options
+export const tradingExperienceOptions = [
+  { value: 'never', label: 'Never traded before - Complete beginner' },
+  { value: 'tried', label: 'I\'ve tried but haven\'t been successful' },
+  { value: 'some-success', label: 'I\'ve had some success but not consistent' },
+  { value: 'experienced', label: 'I\'m experienced but want to improve' },
+  { value: 'advanced', label: 'I\'m advanced and looking for new strategies' },
+];
+
+// Expected earnings options
+export const earningsOptions = [
+  { value: '1k-5k', label: '$1,000 - $5,000 per year' },
+  { value: '5k-15k', label: '$5,000 - $15,000 per year' },
+  { value: '15k-50k', label: '$15,000 - $50,000 per year' },
+  { value: '50k-100k', label: '$50,000 - $100,000 per year' },
+  { value: '100k-250k', label: '$100,000 - $250,000 per year' },
+  { value: '250k+', label: '$250,000+ per year' },
+];

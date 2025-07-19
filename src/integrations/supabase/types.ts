@@ -14,13 +14,125 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      admin_users: {
+        Row: {
+          created_at: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "admin_users_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "user_admin_status"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      applications: {
+        Row: {
+          age: string
+          content_topic: string
+          created_at: string
+          description: string | null
+          expected_earnings: string | null
+          follower_count: string
+          full_name: string
+          goal: string | null
+          id: string
+          income: string
+          instagram: string | null
+          location: string
+          main_challenge: string | null
+          occupation: string
+          open_to_call: boolean
+          proud_link: string
+          trading_experience: string | null
+          whatsapp: string
+        }
+        Insert: {
+          age: string
+          content_topic: string
+          created_at?: string
+          description?: string | null
+          expected_earnings?: string | null
+          follower_count: string
+          full_name: string
+          goal?: string | null
+          id?: string
+          income: string
+          instagram?: string | null
+          location: string
+          main_challenge?: string | null
+          occupation: string
+          open_to_call?: boolean
+          proud_link: string
+          trading_experience?: string | null
+          whatsapp: string
+        }
+        Update: {
+          age?: string
+          content_topic?: string
+          created_at?: string
+          description?: string | null
+          expected_earnings?: string | null
+          follower_count?: string
+          full_name?: string
+          goal?: string | null
+          id?: string
+          income?: string
+          instagram?: string | null
+          location?: string
+          main_challenge?: string | null
+          occupation?: string
+          open_to_call?: boolean
+          proud_link?: string
+          trading_experience?: string | null
+          whatsapp?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
-      [_ in never]: never
+      user_admin_status: {
+        Row: {
+          admin_granted_at: string | null
+          email: string | null
+          id: string | null
+          is_admin: boolean | null
+          user_created_at: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
-      [_ in never]: never
+      add_admin_user: {
+        Args: { user_email: string }
+        Returns: undefined
+      }
+      get_recent_applicants: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          full_name: string
+          location: string
+          created_at: string
+        }[]
+      }
+      toggle_admin_status: {
+        Args: { user_id: string; grant_admin: boolean }
+        Returns: undefined
+      }
     }
     Enums: {
       [_ in never]: never

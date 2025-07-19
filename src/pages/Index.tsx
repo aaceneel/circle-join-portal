@@ -17,8 +17,9 @@ import FormNavigation from '@/components/form/FormNavigation';
 // Form Steps Components
 import BasicInfoStep from '@/components/form/BasicInfoStep';
 import OccupationStep from '@/components/form/OccupationStep';
-import FinalQuestionStep from '@/components/form/FinalQuestionStep';
 import ContentQuestionsStep from '@/components/form/ContentQuestionsStep';
+import TradingExperienceStep from '@/components/form/TradingExperienceStep';
+import FinalQuestionStep from '@/components/form/FinalQuestionStep';
 
 // Main application component
 const Index = () => {
@@ -30,7 +31,7 @@ const Index = () => {
   const [customIncome, setCustomIncome] = useState('');
   const navigate = useNavigate();
   
-  const totalSteps = 4;
+  const totalSteps = 5;
   const { validateStep } = useFormValidation();
   
   // Set country dial code when country changes
@@ -137,7 +138,10 @@ const Index = () => {
           proud_link: formData.proudLink,
           follower_count: formData.followerCount,
           open_to_call: formData.openToCall,
-          goal: '' // Adding an empty goal field to match the schema
+          goal: '', // Adding an empty goal field to match the schema
+          trading_experience: formData.tradingExperience,
+          expected_earnings: formData.expectedEarnings,
+          main_challenge: '' // Adding empty main_challenge to match schema
         });
         
       if (error) {
@@ -224,10 +228,22 @@ const Index = () => {
               />
             </FormStep>
             
-            {/* Step 4: Final Questions */}
+            {/* Step 4: Trading Experience */}
             <FormStep
               isActive={currentStep === 4}
               isCompleted={currentStep > 4}
+            >
+              <TradingExperienceStep 
+                formData={formData} 
+                formErrors={formErrors} 
+                handleChange={handleChange}
+              />
+            </FormStep>
+            
+            {/* Step 5: Final Questions */}
+            <FormStep
+              isActive={currentStep === 5}
+              isCompleted={currentStep > 5}
             >
               <FinalQuestionStep 
                 formData={formData} 
