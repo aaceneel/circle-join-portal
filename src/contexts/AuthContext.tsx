@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { isUserAdmin } from '@/integrations/supabase/adminClient';
@@ -27,30 +26,34 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     // Set up auth state listener FIRST
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
+        console.log("Auth state changed:", event, session?.user?.email);
         setSession(session);
         setUser(session?.user ?? null);
         
         // Check admin status when session changes
         if (session?.user) {
           setTimeout(() => {
-            checkAdminStatus(session.user.id);
+            checkAdminStatus(session.user);
           }, 0);
         } else {
           setIsAdmin(false);
+          setIsLoading(false);
         }
       }
     );
     
     // THEN check for existing session
     supabase.auth.getSession().then(({ data: { session } }) => {
+      console.log("Initial session:", session?.user?.email);
       setSession(session);
       setUser(session?.user ?? null);
       
       // Check admin status for existing session
       if (session?.user) {
-        checkAdminStatus(session.user.id);
+        checkAdminStatus(session.user);
+      } else {
+        setIsLoading(false);
       }
-      setIsLoading(false);
     });
 
     return () => {
@@ -58,10 +61,32 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     };
   }, []);
   
-  const checkAdminStatus = async (userId: string) => {
-    const adminStatus = await isUserAdmin(userId);
-    setIsAdmin(adminStatus);
-    setIsLoading(false);
+  const checkAdminStatus = async (user: User) => {
+    try {
+      console.log("Checking admin status for:", user.email);
+      
+      // Special case for arcrxx@gmail.com - always grant admin access
+      if (user.email === 'arcrxx@gmail.com') {
+        console.log("Granting admin access to arcrxx@gmail.com");
+        setIsAdmin(true);
+        setIsLoading(false);
+        return;
+      }
+      
+      const adminStatus = await isUserAdmin(user.id);
+      console.log("Admin status result:", adminStatus);
+      setIsAdmin(adminStatus);
+    } catch (error) {
+      console.error("Error checking admin status:", error);
+      // If there's an error but user is arcrxx@gmail.com, grant access anyway
+      if (user.email === 'arcrxx@gmail.com') {
+        setIsAdmin(true);
+      } else {
+        setIsAdmin(false);
+      }
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const signIn = async (email: string, password: string) => {

