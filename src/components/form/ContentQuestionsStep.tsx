@@ -2,9 +2,7 @@
 import React from 'react';
 import FormTextArea from '@/components/FormTextArea';
 import FormInput from '@/components/FormInput';
-import FormSelect from '@/components/FormSelect';
 import { FormData } from '@/types/formTypes';
-import { followerCountOptions } from '@/utils/formOptions';
 
 interface ContentQuestionsStepProps {
   formData: FormData;
@@ -41,16 +39,6 @@ const ContentQuestionsStep: React.FC<ContentQuestionsStepProps> = ({
         placeholder="https://example.com/your-proud-content"
         required
         error={formErrors.proudLink}
-      />
-      
-      <FormSelect
-        label="How many followers do you have?"
-        name="followerCount"
-        value={formData.followerCount}
-        onChange={handleChange}
-        options={followerCountOptions}
-        required
-        error={formErrors.followerCount}
       />
     </>
   );

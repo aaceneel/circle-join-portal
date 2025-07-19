@@ -6,15 +6,9 @@ export interface FormData {
   country: string;
   whatsapp: string;
   instagram: string;
-  occupation: string;
-  description: string;
-  income: string;
   contentTopic: string;
   proudLink: string;
-  followerCount: string;
   openToCall: boolean;
-  tradingExperience: string;
-  expectedEarnings: string;
 }
 
 // Initial form data
@@ -24,13 +18,7 @@ export const initialFormData: FormData = {
   country: '',
   whatsapp: '',
   instagram: '',
-  occupation: '',
-  description: '',
-  income: '',
   contentTopic: '',
   proudLink: '',
-  followerCount: '',
   openToCall: true,
-  tradingExperience: '',
-  expectedEarnings: '',
 };

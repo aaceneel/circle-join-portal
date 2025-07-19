@@ -16,9 +16,7 @@ import FormNavigation from '@/components/form/FormNavigation';
 
 // Form Steps Components
 import BasicInfoStep from '@/components/form/BasicInfoStep';
-import OccupationStep from '@/components/form/OccupationStep';
 import ContentQuestionsStep from '@/components/form/ContentQuestionsStep';
-import TradingExperienceStep from '@/components/form/TradingExperienceStep';
 import FinalQuestionStep from '@/components/form/FinalQuestionStep';
 
 // Main application component
@@ -28,10 +26,9 @@ const Index = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [formErrors, setFormErrors] = useState<Partial<Record<keyof FormData, string>>>({});
-  const [customIncome, setCustomIncome] = useState('');
   const navigate = useNavigate();
   
-  const totalSteps = 5;
+  const totalSteps = 3;
   const { validateStep } = useFormValidation();
   
   // Set country dial code when country changes
@@ -119,9 +116,6 @@ const Index = () => {
     try {
       setIsSubmitting(true);
       
-      // Prepare the final income value
-      const finalIncome = formData.income === 'other' ? customIncome : formData.income;
-      
       // Insert data into Supabase
       const { error } = await supabase
         .from('applications')
@@ -131,16 +125,16 @@ const Index = () => {
           location: formData.country,
           whatsapp: formData.whatsapp,
           instagram: formData.instagram,
-          occupation: formData.occupation,
-          description: formData.description || null,
-          income: finalIncome,
+          occupation: '', // Default empty value for required field
+          description: null,
+          income: '', // Default empty value for required field
           content_topic: formData.contentTopic,
           proud_link: formData.proudLink,
-          follower_count: formData.followerCount,
+          follower_count: '', // Default empty value for required field
           open_to_call: formData.openToCall,
           goal: '', // Adding an empty goal field to match the schema
-          trading_experience: formData.tradingExperience,
-          expected_earnings: formData.expectedEarnings,
+          trading_experience: null,
+          expected_earnings: null,
           main_challenge: '' // Adding empty main_challenge to match schema
         });
         
@@ -202,24 +196,10 @@ const Index = () => {
               />
             </FormStep>
             
-            {/* Step 2: Occupation Information */}
+            {/* Step 2: Content-Driven Questions */}
             <FormStep
               isActive={currentStep === 2}
               isCompleted={currentStep > 2}
-            >
-              <OccupationStep 
-                formData={formData} 
-                formErrors={formErrors} 
-                handleChange={handleChange}
-                customIncome={customIncome}
-                setCustomIncome={setCustomIncome}
-              />
-            </FormStep>
-            
-            {/* Step 3: Content-Driven Questions */}
-            <FormStep
-              isActive={currentStep === 3}
-              isCompleted={currentStep > 3}
             >
               <ContentQuestionsStep 
                 formData={formData} 
@@ -228,22 +208,10 @@ const Index = () => {
               />
             </FormStep>
             
-            {/* Step 4: Trading Experience */}
+            {/* Step 3: Final Questions */}
             <FormStep
-              isActive={currentStep === 4}
-              isCompleted={currentStep > 4}
-            >
-              <TradingExperienceStep 
-                formData={formData} 
-                formErrors={formErrors} 
-                handleChange={handleChange}
-              />
-            </FormStep>
-            
-            {/* Step 5: Final Questions */}
-            <FormStep
-              isActive={currentStep === 5}
-              isCompleted={currentStep > 5}
+              isActive={currentStep === 3}
+              isCompleted={currentStep > 3}
             >
               <FinalQuestionStep 
                 formData={formData} 

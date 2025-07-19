@@ -29,23 +29,14 @@ export const useFormValidation = () => {
       
       // Instagram is optional, no validation needed
     } else if (step === 2) {
-      if (!formData.occupation) errors.occupation = 'Occupation is required';
-      if (!formData.income) errors.income = 'Income is required';
-      
-      // Description is optional but suggested to have more than 1 word
-      if (formData.description && formData.description.trim().split(/\s+/).length < 2) {
-        errors.description = 'Please provide more details (at least 2 words)';
-      }
-    } else if (step === 3) {
       if (!formData.contentTopic) errors.contentTopic = 'Please describe what you create content about';
       if (!formData.proudLink) errors.proudLink = 'Please provide a link to your proudest content';
-      if (!formData.followerCount) errors.followerCount = 'Please select your follower count';
       
       // Validate URL format for proud link
       if (formData.proudLink && !isValidUrl(formData.proudLink)) {
         errors.proudLink = 'Please enter a valid URL';
       }
-    } else if (step === 4) {
+    } else if (step === 3) {
       // Only the toggle is required for the final step, no validation needed
     }
     
