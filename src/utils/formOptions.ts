@@ -27,20 +27,14 @@ export const incomeOptions = [
   { value: 'other', label: 'Other' },
 ];
 
-// Trading experience options
-export const tradingExperienceOptions = [
-  { value: 'never', label: 'Never tried' },
-  { value: 'beginner', label: 'Beginner' },
-  { value: 'intermediate', label: 'Intermediate' },
-  { value: 'advanced', label: 'Advanced' },
-  { value: 'profitable', label: 'I\'ve made significant profits' },
-];
-
-// Expected earnings options
-export const earningsOptions = [
-  { value: '50k', label: '$50,000' },
-  { value: '100k', label: '$100,000' },
-  { value: '250k', label: '$250,000' },
-  { value: '500k', label: '$500,000' },
-  { value: '1m+', label: '$1,000,000+' },
+// Follower count options
+export const followerCountOptions = [
+  { value: 'less-1k', label: 'Less than 1,000' },
+  { value: '1k-5k', label: '1,000 - 5,000' },
+  { value: '5k-10k', label: '5,000 - 10,000' },
+  { value: '10k-50k', label: '10,000 - 50,000' },
+  { value: '50k-100k', label: '50,000 - 100,000' },
+  { value: '100k-500k', label: '100,000 - 500,000' },
+  { value: '500k-1m', label: '500,000 - 1M' },
+  { value: '1m+', label: '1M+' },
 ];

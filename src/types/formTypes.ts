@@ -9,9 +9,9 @@ export interface FormData {
   occupation: string;
   description: string;
   income: string;
-  tradingExperience: string;
-  expectedEarnings: string;
-  mainChallenge: string;
+  contentTopic: string;
+  proudLink: string;
+  followerCount: string;
   openToCall: boolean;
 }
 
@@ -25,8 +25,8 @@ export const initialFormData: FormData = {
   occupation: '',
   description: '',
   income: '',
-  tradingExperience: '',
-  expectedEarnings: '',
-  mainChallenge: '',
+  contentTopic: '',
+  proudLink: '',
+  followerCount: '',
   openToCall: true,
 };

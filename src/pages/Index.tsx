@@ -17,8 +17,8 @@ import FormNavigation from '@/components/form/FormNavigation';
 // Form Steps Components
 import BasicInfoStep from '@/components/form/BasicInfoStep';
 import OccupationStep from '@/components/form/OccupationStep';
-import TradingExperienceStep from '@/components/form/TradingExperienceStep';
 import FinalQuestionStep from '@/components/form/FinalQuestionStep';
+import ContentQuestionsStep from '@/components/form/ContentQuestionsStep';
 
 // Main application component
 const Index = () => {
@@ -133,9 +133,9 @@ const Index = () => {
           occupation: formData.occupation,
           description: formData.description || null,
           income: finalIncome,
-          trading_experience: formData.tradingExperience,
-          expected_earnings: formData.expectedEarnings,
-          main_challenge: formData.mainChallenge,
+          content_topic: formData.contentTopic,
+          proud_link: formData.proudLink,
+          follower_count: formData.followerCount,
           open_to_call: formData.openToCall,
           goal: '' // Adding an empty goal field to match the schema
         });
@@ -212,12 +212,12 @@ const Index = () => {
               />
             </FormStep>
             
-            {/* Step 3: Trading Experience */}
+            {/* Step 3: Content-Driven Questions */}
             <FormStep
               isActive={currentStep === 3}
               isCompleted={currentStep > 3}
             >
-              <TradingExperienceStep 
+              <ContentQuestionsStep 
                 formData={formData} 
                 formErrors={formErrors} 
                 handleChange={handleChange}

@@ -37,16 +37,32 @@ export const useFormValidation = () => {
         errors.description = 'Please provide more details (at least 2 words)';
       }
     } else if (step === 3) {
-      if (!formData.tradingExperience) errors.tradingExperience = 'Trading experience is required';
-      if (!formData.expectedEarnings) errors.expectedEarnings = 'Expected earnings is required';
+      if (!formData.contentTopic) errors.contentTopic = 'Please describe what you create content about';
+      if (!formData.proudLink) errors.proudLink = 'Please provide a link to your proudest content';
+      if (!formData.followerCount) errors.followerCount = 'Please select your follower count';
+      
+      // Validate URL format for proud link
+      if (formData.proudLink && !isValidUrl(formData.proudLink)) {
+        errors.proudLink = 'Please enter a valid URL';
+      }
     } else if (step === 4) {
-      if (!formData.mainChallenge) errors.mainChallenge = 'Please share your main challenge';
+      // Only the toggle is required for the final step, no validation needed
     }
     
     return errors;
   }, []);
 
   return { validateStep };
+};
+
+// Helper function to validate URL
+const isValidUrl = (urlString: string): boolean => {
+  try {
+    new URL(urlString);
+    return true;
+  } catch (e) {
+    return false;
+  }
 };
 
 export default useFormValidation;
