@@ -27,24 +27,31 @@ const Index = () => {
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [formErrors, setFormErrors] = useState<Partial<Record<keyof FormData, string>>>({});
   const navigate = useNavigate();
-  
   const totalSteps = 3;
-  const { validateStep } = useFormValidation();
-  
+  const {
+    validateStep
+  } = useFormValidation();
+
   // Set country dial code when country changes
   useEffect(() => {
     if (formData.country && !formData.whatsapp) {
       const selectedCountry = countries.find(c => c.code === formData.country);
       if (selectedCountry) {
-        setFormData(prev => ({ ...prev, whatsapp: selectedCountry.dialCode + ' ' }));
+        setFormData(prev => ({
+          ...prev,
+          whatsapp: selectedCountry.dialCode + ' '
+        }));
       }
     }
   }, [formData.country]);
-  
+
   // Handle input changes
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    
+    const {
+      name,
+      value
+    } = e.target;
+
     // Special handling for country selection to update WhatsApp number
     if (name === 'country' && value) {
       const selectedCountry = countries.find(c => c.code === value);
@@ -55,42 +62,49 @@ const Index = () => {
           const dialCodeRegex = /^\+\d+\s*/;
           const hasDialCode = dialCodeRegex.test(prev.whatsapp);
           const cleanNumber = hasDialCode ? prev.whatsapp.replace(dialCodeRegex, '') : prev.whatsapp;
-          
-          return { 
-            ...prev, 
+          return {
+            ...prev,
             [name]: value,
             whatsapp: selectedCountry.dialCode + (cleanNumber ? ' ' + cleanNumber : ' ')
           };
         });
       } else {
-        setFormData(prev => ({ ...prev, [name]: value }));
+        setFormData(prev => ({
+          ...prev,
+          [name]: value
+        }));
       }
     } else {
-      setFormData(prev => ({ ...prev, [name]: value }));
+      setFormData(prev => ({
+        ...prev,
+        [name]: value
+      }));
     }
-    
+
     // Clear error when field is filled
     if (value && formErrors[name as keyof FormData]) {
       setFormErrors(prev => {
-        const newErrors = { ...prev };
+        const newErrors = {
+          ...prev
+        };
         delete newErrors[name as keyof FormData];
         return newErrors;
       });
     }
   };
-  
+
   // Validate current step and update errors
   const validateCurrentStep = () => {
     const errors = validateStep(currentStep, formData);
     setFormErrors(errors);
     return Object.keys(errors).length === 0;
   };
-  
+
   // Handle next step
   const goToNextStep = () => {
     if (validateCurrentStep()) {
       if (currentStep < totalSteps) {
-        setCurrentStep((prev) => prev + 1);
+        setCurrentStep(prev => prev + 1);
       } else {
         handleSubmit();
       }
@@ -98,141 +112,104 @@ const Index = () => {
       toast.error("Please fill in all required fields correctly");
     }
   };
-  
+
   // Handle previous step
   const goToPrevStep = () => {
     if (currentStep > 1) {
-      setCurrentStep((prev) => prev - 1);
+      setCurrentStep(prev => prev - 1);
     }
   };
-  
+
   // Handle form submission with smooth transition
   const handleSubmit = async () => {
     try {
       setIsSubmitting(true);
-      
+
       // Insert data into Supabase
-      const { error } = await supabase
-        .from('applications')
-        .insert({
-          full_name: formData.fullName,
-          age: formData.age,
-          location: formData.country,
-          whatsapp: formData.whatsapp,
-          instagram: formData.instagram,
-          occupation: '', // Default empty value for required field
-          description: null,
-          income: '', // Default empty value for required field
-          content_topic: formData.contentTopic,
-          proud_link: formData.proudLink,
-          follower_count: formData.followerCount,
-          open_to_call: false, // Default value since field is removed
-          goal: '', // Adding an empty goal field to match the schema
-          trading_experience: null,
-          expected_earnings: null,
-          main_challenge: '' // Adding empty main_challenge to match schema
-        });
-        
+      const {
+        error
+      } = await supabase.from('applications').insert({
+        full_name: formData.fullName,
+        age: formData.age,
+        location: formData.country,
+        whatsapp: formData.whatsapp,
+        instagram: formData.instagram,
+        occupation: '',
+        // Default empty value for required field
+        description: null,
+        income: '',
+        // Default empty value for required field
+        content_topic: formData.contentTopic,
+        proud_link: formData.proudLink,
+        follower_count: formData.followerCount,
+        open_to_call: false,
+        // Default value since field is removed
+        goal: '',
+        // Adding an empty goal field to match the schema
+        trading_experience: null,
+        expected_earnings: null,
+        main_challenge: '' // Adding empty main_challenge to match schema
+      });
       if (error) {
         throw error;
       }
-      
+
       // Show success message and start transition
       toast.success("Application submitted successfully!");
       setIsTransitioning(true);
-      
+
       // Wait for transition animation before redirect
       setTimeout(() => {
         navigate('/received');
       }, 800);
-      
     } catch (error: any) {
       console.error('Error submitting form:', error);
       toast.error(error.message || "An error occurred. Please try again.");
       setIsSubmitting(false);
     }
   };
-  
-  return (
-    <div className="min-h-screen w-full flex flex-col items-center justify-center py-8 px-4">
+  return <div className="min-h-screen w-full flex flex-col items-center justify-center py-8 px-4">
       <Background />
       
       {/* Transition overlay */}
-      {isTransitioning && (
-        <div className="fixed inset-0 z-50 bg-dark/90 backdrop-blur-sm flex items-center justify-center transition-all duration-800 ease-in-out">
+      {isTransitioning && <div className="fixed inset-0 z-50 bg-dark/90 backdrop-blur-sm flex items-center justify-center transition-all duration-800 ease-in-out">
           <div className="text-center space-y-4 animate-fade-in">
             <div className="w-16 h-16 border-4 border-glow-purple/30 border-t-glow-purple rounded-full animate-spin mx-auto" />
             <div className="text-white text-lg font-medium">Processing your application...</div>
             <div className="text-white/70 text-sm">Redirecting you to confirmation page</div>
           </div>
-        </div>
-      )}
+        </div>}
       
       <div className={`w-full max-w-2xl mx-auto transition-all duration-500 ${isTransitioning ? 'opacity-50 scale-95' : 'opacity-100 scale-100'}`}>
         <div className="glass-card card-floating p-6 md:p-8">
           <FormHeader className="mb-8" />
           
-          <ProgressBar 
-            currentStep={currentStep} 
-            totalSteps={totalSteps} 
-            className="mb-8" 
-          />
+          <ProgressBar currentStep={currentStep} totalSteps={totalSteps} className="mb-8" />
           
           <div className="space-y-6">
             {/* Step 1: Basic Information */}
-            <FormStep
-              isActive={currentStep === 1}
-              isCompleted={currentStep > 1}
-            >
-              <BasicInfoStep 
-                formData={formData} 
-                formErrors={formErrors} 
-                handleChange={handleChange} 
-              />
+            <FormStep isActive={currentStep === 1} isCompleted={currentStep > 1}>
+              <BasicInfoStep formData={formData} formErrors={formErrors} handleChange={handleChange} />
             </FormStep>
             
             {/* Step 2: Content-Driven Questions */}
-            <FormStep
-              isActive={currentStep === 2}
-              isCompleted={currentStep > 2}
-            >
-              <ContentQuestionsStep 
-                formData={formData} 
-                formErrors={formErrors} 
-                handleChange={handleChange}
-              />
+            <FormStep isActive={currentStep === 2} isCompleted={currentStep > 2}>
+              <ContentQuestionsStep formData={formData} formErrors={formErrors} handleChange={handleChange} />
             </FormStep>
             
             {/* Step 3: Final Questions */}
-            <FormStep
-              isActive={currentStep === 3}
-              isCompleted={currentStep > 3}
-            >
-              <FinalQuestionStep 
-                formData={formData} 
-                formErrors={formErrors} 
-                handleChange={handleChange}
-              />
+            <FormStep isActive={currentStep === 3} isCompleted={currentStep > 3}>
+              <FinalQuestionStep formData={formData} formErrors={formErrors} handleChange={handleChange} />
             </FormStep>
             
-            <FormNavigation
-              currentStep={currentStep}
-              totalSteps={totalSteps}
-              isSubmitting={isSubmitting || isTransitioning}
-              goToPrevStep={goToPrevStep}
-              goToNextStep={goToNextStep}
-            />
+            <FormNavigation currentStep={currentStep} totalSteps={totalSteps} isSubmitting={isSubmitting || isTransitioning} goToPrevStep={goToPrevStep} goToNextStep={goToNextStep} />
           </div>
           
-          <div className="mt-8 text-center text-white/50 text-sm">
-            Over 9,800+ ambitious traders have already applied
-          </div>
+          <div className="mt-8 text-center text-white/50 text-sm">Over 1,800+ ambitious creators have already applied</div>
           
           <RecentApplicants className="mt-6" />
         </div>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default Index;
