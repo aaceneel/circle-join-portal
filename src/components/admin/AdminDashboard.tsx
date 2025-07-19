@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { adminSupabase } from '@/integrations/supabase/adminClient';
 import { toast } from 'sonner';
-import ApplicantCard from './ApplicantCard';
+import ApplicantTable from './ApplicantTable';
 import ApplicantDetails from './ApplicantDetails';
 import AdminUserManager from './AdminUserManager';
 import { useAuth } from '@/contexts/AuthContext';
@@ -128,15 +128,10 @@ const AdminDashboard = () => {
               <p className="text-white/60">No applications found</p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {applicants.map((applicant) => (
-                <ApplicantCard 
-                  key={applicant.id} 
-                  applicant={applicant} 
-                  onViewDetails={handleViewDetails} 
-                />
-              ))}
-            </div>
+            <ApplicantTable 
+              applicants={applicants} 
+              onViewDetails={handleViewDetails} 
+            />
           )}
         </div>
       )}
