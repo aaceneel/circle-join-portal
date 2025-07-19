@@ -79,11 +79,6 @@ const Index = () => {
     }
   };
   
-  // Handle toggle changes
-  const handleToggleChange = (checked: boolean) => {
-    setFormData((prev) => ({ ...prev, openToCall: checked }));
-  };
-  
   // Validate current step and update errors
   const validateCurrentStep = () => {
     const errors = validateStep(currentStep, formData);
@@ -131,7 +126,7 @@ const Index = () => {
           content_topic: formData.contentTopic,
           proud_link: formData.proudLink,
           follower_count: formData.followerCount,
-          open_to_call: formData.openToCall,
+          open_to_call: false, // Default value since field is removed
           goal: '', // Adding an empty goal field to match the schema
           trading_experience: null,
           expected_earnings: null,
@@ -217,7 +212,6 @@ const Index = () => {
                 formData={formData} 
                 formErrors={formErrors} 
                 handleChange={handleChange}
-                handleToggleChange={handleToggleChange}
               />
             </FormStep>
             

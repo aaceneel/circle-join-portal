@@ -1,6 +1,5 @@
 
 import React from 'react';
-import FormToggle from '@/components/FormToggle';
 import FormSelect from '@/components/FormSelect';
 import { FormData } from '@/types/formTypes';
 
@@ -8,14 +7,12 @@ interface FinalQuestionStepProps {
   formData: FormData;
   formErrors: Partial<Record<keyof FormData, string>>;
   handleChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => void;
-  handleToggleChange: (checked: boolean) => void;
 }
 
 const FinalQuestionStep: React.FC<FinalQuestionStepProps> = ({
   formData,
   formErrors,
-  handleChange,
-  handleToggleChange
+  handleChange
 }) => {
   const followerOptions = [
     { value: '0-1k', label: '0 - 1k followers' },
@@ -36,14 +33,6 @@ const FinalQuestionStep: React.FC<FinalQuestionStepProps> = ({
         options={followerOptions}
         required
         error={formErrors.followerCount}
-      />
-      
-      <FormToggle
-        label="Would you be open to a free strategy call?"
-        checked={formData.openToCall}
-        onCheckedChange={handleToggleChange}
-        description="Our team may reach out to schedule a call to discuss your goals"
-        wrapperClassName="mt-6"
       />
     </>
   );

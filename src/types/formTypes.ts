@@ -9,7 +9,6 @@ export interface FormData {
   contentTopic: string;
   proudLink: string;
   followerCount: string;
-  openToCall: boolean;
 }
 
 // Initial form data
@@ -22,5 +21,4 @@ export const initialFormData: FormData = {
   contentTopic: '',
   proudLink: '',
   followerCount: '',
-  openToCall: true,
 };
