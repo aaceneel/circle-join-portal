@@ -37,7 +37,7 @@ export const useFormValidation = () => {
         errors.proudLink = 'Please enter a valid URL';
       }
     } else if (step === 3) {
-      // Only the toggle is required for the final step, no validation needed
+      if (!formData.followerCount) errors.followerCount = 'Please select your follower count';
     }
     
     return errors;

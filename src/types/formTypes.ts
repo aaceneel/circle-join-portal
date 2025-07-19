@@ -8,6 +8,7 @@ export interface FormData {
   instagram: string;
   contentTopic: string;
   proudLink: string;
+  followerCount: string;
   openToCall: boolean;
 }
 
@@ -20,5 +21,6 @@ export const initialFormData: FormData = {
   instagram: '',
   contentTopic: '',
   proudLink: '',
+  followerCount: '',
   openToCall: true,
 };

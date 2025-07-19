@@ -130,7 +130,7 @@ const Index = () => {
           income: '', // Default empty value for required field
           content_topic: formData.contentTopic,
           proud_link: formData.proudLink,
-          follower_count: '', // Default empty value for required field
+          follower_count: formData.followerCount,
           open_to_call: formData.openToCall,
           goal: '', // Adding an empty goal field to match the schema
           trading_experience: null,
